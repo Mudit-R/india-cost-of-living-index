@@ -61,30 +61,38 @@ Complete dataset with the following columns:
 
 ### Component Insights
 
-**Housing (40% weight)**
-- Highest variation across cities
-- Metropolitan areas 2-3x more expensive
-- Primary driver of overall index differences
-
-**Groceries (25% weight)**
+**Groceries (38.70% normalised weight)**
 - More uniform across cities
 - Online platforms (Blinkit) reduce regional variation
 - Typically 80-120 index range
 
-**Transportation (15% weight)**
+**Housing (32.25% normalised weight)**
+- Highest variation across cities
+- Metropolitan areas 2-3x more expensive
+- Primary driver of overall index differences
+
+**Transportation (11.61% normalised weight)**
 - Uber pricing relatively standardized
 - Slight variations based on local regulations
 - Range: 85-115
 
-**Healthcare (10% weight)**
+**Healthcare (6.84% normalised weight)**
 - Moderate variation
 - Metropolitan areas have higher consultation fees
 - Range: 70-130
 
-**Fuel (10% weight)**
-- Least variation (government regulated)
-- Differences mainly due to state taxes
-- Range: 90-110
+**Restaurants (5.16% normalised weight)**
+- Reflects dining-out costs via Swiggy data
+- Varies with city tier and cuisine mix
+
+**Electricity (3.23% normalised weight)**
+- State-regulated tariffs
+- Least variation overall
+- Range: 75-190
+
+**Movies (2.21% normalised weight)**
+- Entertainment proxy
+- Multiplex pricing varies by city tier
 
 ## Sample Console Output
 

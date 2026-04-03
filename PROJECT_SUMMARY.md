@@ -42,11 +42,12 @@ A Python-based analytical tool that:
 ## Methodology
 
 ### Weightage System
-Based on typical urban household expenditure:
+Based on typical urban household expenditure (raw weights re-normalised to 100%):
 
 ```
-Cost Index = (Housing × 40%) + (Groceries × 25%) + 
-             (Transport × 15%) + (Healthcare × 10%) + (Fuel × 10%)
+Cost Index = (Groceries × 38.70%) + (Housing × 32.25%) +
+             (Transport × 11.61%) + (Healthcare × 6.84%) +
+             (Restaurants × 5.16%) + (Electricity × 3.23%) + (Movies × 2.21%)
 ```
 
 ### Calculation Process
@@ -104,7 +105,7 @@ main.py             → Orchestration
 
 ### Cost Variation
 - **Range**: 2-3x difference between most/least expensive cities
-- **Primary Driver**: Housing costs (40% weight)
+- **Primary Driver**: Grocery costs (38.70% weight)
 - **Most Stable**: Fuel prices (government regulated)
 
 ### City Tiers
@@ -157,7 +158,7 @@ main.py             → Orchestration
 
 This project successfully creates a data-driven, reproducible Cost of Living Index for Indian cities. The modular architecture makes it easy to update data, adjust weights, or add new categories. The comprehensive documentation ensures the project can be understood and extended by others.
 
-The weighted approach (40% housing, 25% groceries, etc.) reflects real household expenditure patterns, making the index practical and relevant for decision-making.
+The weighted approach (Groceries 38.70%, Housing 32.25%, Transport 11.61%, etc.) reflects real household expenditure patterns, making the index practical and relevant for decision-making.
 
 ## How to Use This Project
 

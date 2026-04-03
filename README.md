@@ -4,17 +4,21 @@ A comprehensive data analysis project that calculates Cost of Living Index for 5
 
 ## 🎯 Project Overview
 
-This project processes data from 5 different sources to create a weighted Cost of Living Index that reflects actual household expenditure patterns in urban India. The index helps compare living costs across cities with Delhi as the base (Index = 100).
+This project processes data from 7 different sources to create a weighted Cost of Living Index that reflects actual household expenditure patterns in urban India. The index helps compare living costs across cities with Delhi as the base (Index = 100).
 
 ## 📊 Data Sources
 
-| Category | Source | Weight | Files |
-|----------|--------|--------|-------|
-| **Housing** | MagicBricks | 40% | 51 files (xlsx/csv) |
-| **Groceries** | Blinkit | 25% | 41 files (xlsx) |
-| **Transportation** | Uber | 15% | 1 file (xlsx) |
-| **Healthcare** | Physician Fees | 10% | 1 file (xlsx) |
-| **Fuel** | City Prices | 10% | 1 file (csv) |
+| Category | Source | Raw Weight | Normalised Weight | Files |
+|----------|--------|------------|-------------------|-------|
+| **Groceries** | Blinkit | 30 | 38.70% | 41 files (xlsx) |
+| **Housing** | MagicBricks | 25 | 32.25% | 51 files (xlsx/csv) |
+| **Transportation** | Uber | 9 | 11.61% | 1 file (xlsx) |
+| **Healthcare** | Physician Fees | 5.3 | 6.84% | 1 file (xlsx) |
+| **Restaurants** | Swiggy | 4 | 5.16% | 1 file (xlsx) |
+| **Electricity** | City Rates | 2.5 | 3.23% | 1 file (xlsx) |
+| **Movies** | Ticket Prices | 1.71 | 2.21% | 1 file (xlsx) |
+
+> Raw weights sum to 77.51 and are re-normalised to 100% at runtime.
 
 ## 🚀 Quick Start
 
@@ -83,12 +87,14 @@ After running the analysis:
 
 ## 📊 Weightage Justification
 
-Based on typical urban household expenditure in India:
-- **Housing (40%)**: Largest fixed expense (rent/EMI)
-- **Groceries (25%)**: Daily food consumption
-- **Transportation (15%)**: Commute and travel
-- **Healthcare (10%)**: Essential medical services
-- **Fuel (10%)**: Personal vehicle costs
+Based on typical urban household expenditure in India (raw weights re-normalised to 100%):
+- **Groceries (38.70%)**: Daily food consumption — largest household expense
+- **Housing (32.25%)**: Rent/EMI — major fixed cost
+- **Transport (11.61%)**: Daily commute via ride-hailing
+- **Healthcare (6.84%)**: Essential medical services
+- **Restaurants (5.16%)**: Dining out / food delivery
+- **Electricity (3.23%)**: Monthly utility bill
+- **Movies (2.21%)**: Entertainment proxy
 
 ## 🧪 Testing
 

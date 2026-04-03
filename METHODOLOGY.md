@@ -5,35 +5,47 @@ This project calculates a comprehensive Cost of Living Index for 50 Indian citie
 
 ## Data Sources
 
-### 1. Housing Prices (40% weight)
-- **Source**: MagicBricks property listings
-- **Format**: Mixed (Excel .xlsx and CSV files)
-- **Metric**: Average property prices/rent per city
-- **Rationale**: Housing is typically the largest expense for urban households
-
-### 2. Grocery Prices (25% weight)
+### 1. Grocery Prices (38.70% normalised weight, raw: 30)
 - **Source**: Blinkit (online grocery delivery)
 - **Format**: Excel files (.xlsx)
-- **Metric**: Average price of fruits and vegetables
-- **Rationale**: Food is the second-largest household expense
+- **Metric**: IQR-cleaned median price per city
+- **Rationale**: Daily food consumption is the largest household expense
 
-### 3. Transportation (15% weight)
+### 2. Housing Prices (32.25% normalised weight, raw: 25)
+- **Source**: MagicBricks property listings
+- **Format**: Mixed (Excel .xlsx and CSV files)
+- **Metric**: IQR-cleaned median price per sq ft
+- **Rationale**: Rent/EMI is the second-largest fixed expense
+
+### 3. Transportation (11.61% normalised weight, raw: 9)
 - **Source**: Uber pricing data
 - **Format**: Excel file (.xlsx)
 - **Metric**: Price per kilometer
 - **Rationale**: Daily commute is a significant recurring cost
 
-### 4. Healthcare (10% weight)
+### 4. Healthcare (6.84% normalised weight, raw: 5.3)
 - **Source**: General physician consultation fees
-- **Format**: Excel file (.xlsx)
-- **Metric**: Average consultation fee
+- **Format**: Excel file (.xlsx) — wide format, all observations per city
+- **Metric**: IQR-cleaned median consultation fee
 - **Rationale**: Healthcare is an essential but less frequent expense
 
-### 5. Fuel Prices (10% weight)
-- **Source**: City-wise fuel pricing data
-- **Format**: CSV file
-- **Metric**: Average of petrol and diesel prices
-- **Rationale**: Fuel costs affect personal transportation
+### 5. Restaurants (5.16% normalised weight, raw: 4)
+- **Source**: Swiggy restaurant dataset
+- **Format**: Excel file (.xlsx)
+- **Metric**: IQR-cleaned median per-person meal cost
+- **Rationale**: Dining out / food delivery is a regular urban expense
+
+### 6. Electricity (3.23% normalised weight, raw: 2.5)
+- **Source**: City-wise electricity tariff data
+- **Format**: Excel file (.xlsx)
+- **Metric**: Effective rate (₹/unit)
+- **Rationale**: Monthly utility bill affects all households
+
+### 7. Movies (2.21% normalised weight, raw: 1.71)
+- **Source**: City-wise movie ticket prices
+- **Format**: Excel file (.xlsx)
+- **Metric**: IQR-cleaned median ticket price
+- **Rationale**: Entertainment proxy for discretionary spending
 
 ## Calculation Method
 
@@ -53,26 +65,31 @@ Component_Index = (City_Price / Base_City_Price) × 100
 The overall Cost of Living Index is calculated as:
 
 ```
-Cost_Index = (Housing_Index × 0.40) + 
-             (Grocery_Index × 0.25) + 
-             (Transport_Index × 0.15) + 
-             (Healthcare_Index × 0.10) + 
-             (Fuel_Index × 0.10)
+Cost_Index = (Grocery_Index   × 0.3870) +
+             (Housing_Index   × 0.3225) +
+             (Transport_Index × 0.1161) +
+             (Healthcare_Index× 0.0684) +
+             (Restaurant_Index× 0.0516) +
+             (Electricity_Index×0.0323) +
+             (Movie_Index     × 0.0221)
 ```
+
+> Raw weights (30, 25, 9, 5.3, 4, 2.5, 1.71) sum to 77.51 and are re-normalised to 100% at runtime.
 
 ## Weightage Justification
 
-The weights are based on typical urban household expenditure patterns in India:
+The weights are based on typical urban household expenditure patterns in India. Raw values are re-normalised to 100% at runtime.
 
-| Category | Weight | Justification |
-|----------|--------|---------------|
-| Housing | 40% | Rent/EMI is the largest fixed expense for most households |
-| Groceries | 25% | Daily food consumption is the second-largest expense |
-| Transportation | 15% | Daily commute and travel costs |
-| Healthcare | 10% | Essential but less frequent expense |
-| Fuel | 10% | Affects personal vehicle owners |
-
-**Total**: 100%
+| Category | Raw Weight | Normalised | Justification |
+|----------|-----------|------------|---------------|
+| Groceries | 30 | 38.70% | Daily food consumption — largest expense |
+| Housing | 25 | 32.25% | Rent/EMI — major fixed cost |
+| Transportation | 9 | 11.61% | Daily commute via ride-hailing |
+| Healthcare | 5.3 | 6.84% | Essential medical services |
+| Restaurants | 4 | 5.16% | Dining out / food delivery |
+| Electricity | 2.5 | 3.23% | Monthly utility bill |
+| Movies | 1.71 | 2.21% | Entertainment proxy |
+| **Total** | **77.51** | **100%** | |
 
 ## Handling Missing Data
 
