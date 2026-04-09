@@ -45,31 +45,24 @@ class WeightOptimizer:
         print(f"\n[1] Loading reference data from {source}...")
         
         # Numbeo Cost of Living Index (2026)
-        # Source: Numbeo.com rankings
-        # Raw indices — will normalize to Delhi = 100
+        # Source: User-provided Numbeo screenshot
+        # Raw COL indices — will normalize to Delhi = 100
         numbeo_raw = {
-            'Mumbai': 26.3,
-            'Gurgaon': 24.7,
-            'Delhi': 23.0,
-            'Pune': 22.8,
-            'Bangalore': 21.9,
-            'Noida': 21.9,
-            'Hyderabad': 21.7,
-            'Ahmedabad': 21.2,
-            'Chandigarh': 20.9,
-            'Chennai': 20.7,
-            'Thane': 20.7,
-            'Vadodara': 20.6,
-            'Bhubaneswar': 19.4,
-            'Patna': 19.4,
-            'Bhopal': 19.2,
-            'Kolkata': 19.2,
-            'Kochi': 19.0,
+            'Mumbai': 25.4,
+            'Gurgaon': 24.6,
+            'Bangalore': 24.4,
+            'Delhi': 22.9,
+            'Pune': 22.7,
+            'Noida': 22.3,
+            'Ahmedabad': 21.7,
+            'Hyderabad': 21.6,
+            'Chennai': 20.5,
+            'Kolkata': 19.5,
+            'Kochi': 19.3,
             'Jaipur': 19.0,
-            'Surat': 18.7,
-            'Indore': 18.4,
-            'Lucknow': 17.8,
-            'Coimbatore': 17.6,
+            'Surat': 18.8,
+            'Coimbatore': 18.6,
+            'Lucknow': 18.4,
         }
         
         # Normalize to Delhi = 100
