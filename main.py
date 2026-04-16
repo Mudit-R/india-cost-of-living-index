@@ -44,13 +44,17 @@ def main():
     electricity_df = loader.load_electricity_prices()
     print(f"  ✓ Loaded electricity rates for {len(electricity_df)} cities")
     
+    tutor_df = loader.load_tutor_data()
+    print(f"  ✓ Loaded tutor/education fees for {len(tutor_df)} cities")
+    
     # Step 2: Merge and calculate index
     print("\n[2/5] Merging datasets and calculating cost index...")
     calculator = CostIndexCalculator()
     
     merged_df = calculator.merge_all_data(
         fuel_df, uber_df, doctor_df, grocery_df, housing_df,
-        swiggy_df=swiggy_df, movie_df=movie_df, electricity_df=electricity_df
+        swiggy_df=swiggy_df, movie_df=movie_df, electricity_df=electricity_df,
+        tutor_df=tutor_df
     )
     print(f"  ✓ Merged data for {len(merged_df)} cities")
     
@@ -113,7 +117,7 @@ def main():
     for label, key in [("Housing", "housing"), ("Food/Grocery", "grocery"),
                         ("Transport", "transportation"), ("Healthcare", "healthcare"),
                         ("Electricity", "electricity"), ("Restaurants", "restaurant"),
-                        ("Movies", "movie")]:
+                        ("Movies", "movie"), ("Education", "education")]:
         if key in w:
             print(f"{label:<20} {w[key]*100:.2f}%")
     

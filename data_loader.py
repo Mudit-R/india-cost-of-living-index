@@ -201,6 +201,60 @@ class DataLoader:
             self.cities.update(result['City'].tolist())
         return result
 
+    def load_tutor_data(self, filepath="TutorData_Filtered.xlsx"):
+        """Load tutor/education fees data (per-hour only)"""
+        city_fees = []
+        try:
+            df = pd.read_excel(filepath)
+            df.columns = df.columns.str.strip()
+            
+            # Filter out rows where City is NaN or Fee is NaN
+            df = df.dropna(subset=['City', 'Fee'])
+            df['City'] = df['City'].astype(str).str.strip()
+            
+            # Filter to only include per-hour fees (exclude monthly fees)
+            df = df[df['Fee'].str.contains('/hour', case=False, na=False)]
+            
+            # Extract numeric fee values from the Fee column
+            # Format: ₹300–1,000/hour or ₹500–800/hour
+            def extract_fee_range(fee_str):
+                """Extract average of fee range"""
+                try:
+                    # Extract numbers from string like "₹300–1,000/hour"
+                    import re
+                    numbers = re.findall(r'₹([\d,]+)', str(fee_str))
+                    if len(numbers) >= 2:
+                        # Get min and max, remove commas, convert to float
+                        min_fee = float(numbers[0].replace(',', ''))
+                        max_fee = float(numbers[1].replace(',', ''))
+                        return (min_fee + max_fee) / 2
+                    elif len(numbers) == 1:
+                        return float(numbers[0].replace(',', ''))
+                    return None
+                except:
+                    return None
+            
+            df['fee_numeric'] = df['Fee'].apply(extract_fee_range)
+            df = df.dropna(subset=['fee_numeric'])
+            
+            # Group by city and calculate average (mean) with outlier removal
+            for city, grp in df.groupby('City'):
+                fees = grp['fee_numeric']
+                if len(fees) >= 3:  # Need at least 3 data points
+                    # Remove outliers using IQR method
+                    Q1, Q3 = fees.quantile(0.25), fees.quantile(0.75)
+                    IQR = Q3 - Q1
+                    clean = fees[(fees >= Q1 - 1.5*IQR) & (fees <= Q3 + 1.5*IQR)]
+                    if len(clean) > 0:
+                        city_fees.append({'City': city, 'tutor_fee': clean.mean()})
+        except Exception as e:
+            print(f"Error loading tutor data: {e}")
+        
+        result = pd.DataFrame(city_fees)
+        if not result.empty:
+            self.cities.update(result['City'].tolist())
+        return result
+
     def load_housing_data(self, folder="Magic Bricks data"):
         """Load housing prices from MagicBricks data.
         Uses P25 (lower quartile) to represent affordable/typical housing,

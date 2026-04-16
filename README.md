@@ -1,150 +1,146 @@
 # Cost of Living Index - 50 Indian Cities
 
-A comprehensive data analysis project that calculates Cost of Living Index for 50 Indian cities using real-world data from multiple e-commerce and online sources.
+A comprehensive data analysis project that calculates and visualizes the cost of living across 50 major Indian cities using real-world data from multiple sources.
 
-## 🎯 Project Overview
+## 🎯 Quick Start
 
-This project processes data from 7 different sources to create a weighted Cost of Living Index that reflects actual household expenditure patterns in urban India. The index helps compare living costs across cities with Delhi as the base (Index = 100).
-
-## 📊 Data Sources
-
-| Category | Source | Raw Weight | Normalised Weight | Files |
-|----------|--------|------------|-------------------|-------|
-| **Groceries** | Blinkit | 30 | 38.70% | 41 files (xlsx) |
-| **Housing** | MagicBricks | 25 | 32.25% | 51 files (xlsx/csv) |
-| **Transportation** | Uber | 9 | 11.61% | 1 file (xlsx) |
-| **Healthcare** | Physician Fees | 5.3 | 6.84% | 1 file (xlsx) |
-| **Restaurants** | Swiggy | 4 | 5.16% | 1 file (xlsx) |
-| **Electricity** | City Rates | 2.5 | 3.23% | 1 file (xlsx) |
-| **Movies** | Ticket Prices | 1.71 | 2.21% | 1 file (xlsx) |
-
-> Raw weights sum to 77.51 and are re-normalised to 100% at runtime.
-
-## 🚀 Quick Start
-
-### Option 1: Automated Setup (Recommended)
 ```bash
+# Run the complete analysis
 ./run.sh
+
+# Or manually:
+cd src
+python3 main.py
 ```
 
-### Option 2: Manual Setup
+## 📊 Results
+
+- **CSV Report**: `outputs/reports/cost_index_results.csv`
+- **Visualizations**: `outputs/visualizations/`
+- **Documentation**: `docs/`
+
+## 🏗️ Project Structure
+
+```
+├── data/                    # All data files
+│   ├── raw/                # Original data sources
+│   │   ├── housing/        # MagicBricks data (50 cities)
+│   │   ├── grocery/        # Blinkit data (41 cities)
+│   │   ├── transport/      # Uber & fuel prices
+│   │   ├── healthcare/     # Doctor consultation fees
+│   │   ├── education/      # Tutor hourly rates (60K+ listings)
+│   │   ├── utilities/      # Electricity rates
+│   │   └── entertainment/  # Movies & restaurants
+│   └── processed/          # Generated data
+│
+├── src/                     # Source code
+│   ├── main.py             # Main execution script
+│   ├── data_loader.py      # Data loading & preprocessing
+│   ├── cost_calculator.py  # Index calculations
+│   ├── visualizer.py       # Chart generation
+│   ├── ml_classification.py # ML models
+│   └── city-recommendation/ # Recommendation system
+│
+├── outputs/                 # Generated outputs
+│   ├── visualizations/     # All charts & graphs
+│   └── reports/            # CSV results
+│
+├── docs/                    # Documentation
+│   ├── README.md           # Detailed project info
+│   ├── METHODOLOGY.md      # Calculation methodology
+│   ├── SETUP.md            # Installation guide
+│   └── ... (more docs)
+│
+└── tests/                   # Test files
+
+```
+
+## 📈 Key Features
+
+- ✅ **50 Indian cities** analyzed
+- ✅ **8 cost components** tracked (Housing, Grocery, Transport, Healthcare, Education, Restaurant, Electricity, Movies)
+- ✅ **94+ data files** processed
+- ✅ **Weighted index** calculation (Delhi = 100)
+- ✅ **Multiple visualizations** generated
+- ✅ **ML classification** models included
+- ✅ **City recommendation** system
+
+## 🎨 Component Weights
+
+The cost of living index uses the following normalized weights:
+
+| Component | Weight |
+|-----------|--------|
+| Grocery | 36.36% |
+| Housing | 30.30% |
+| Transport | 10.91% |
+| Healthcare | 6.42% |
+| Education | 6.06% |
+| Restaurant | 4.85% |
+| Electricity | 3.03% |
+| Movies | 2.07% |
+
+## 📊 Sample Results
+
+**Top 5 Most Expensive Cities:**
+1. Mumbai - 167.85
+2. Bengaluru - 109.64
+3. Kozhikode - 101.16
+4. Hyderabad - 100.18
+5. Delhi - 100.00 (Base)
+
+**Top 5 Most Affordable Cities:**
+1. Malappuram - 61.83
+2. Sangli - 65.86
+3. Jamnagar - 67.56
+4. Surat - 68.01
+5. Asansol - 68.30
+
+## 🔧 Requirements
+
 ```bash
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run analysis
-python main.py
+pip install pandas numpy matplotlib seaborn openpyxl
 ```
 
-### Option 3: Interactive Analysis
-```bash
-source venv/bin/activate
-pip install jupyter
-jupyter notebook analysis.ipynb
-```
+## 📚 Documentation
 
-## 📁 Project Structure
+See the `docs/` folder for detailed documentation:
+- **SETUP.md** - Installation and setup instructions
+- **METHODOLOGY.md** - Calculation methodology and formulas
+- **EXPECTED_OUTPUTS.md** - Output interpretation guide
+- **EDUCATION_INTEGRATION.md** - Education component details
+- **ML_APPLICATIONS.md** - Machine learning applications
 
-```
-.
-├── main.py                    # Main execution script
-├── data_loader.py             # Data loading & preprocessing
-├── cost_calculator.py         # Index calculation engine
-├── visualizer.py              # Visualization generator
-├── config.py                  # Configuration settings
-├── analysis.ipynb             # Jupyter notebook
-├── test_data.py               # Data verification script
-├── requirements.txt           # Python dependencies
-├── README.md                  # This file
-├── SETUP.md                   # Detailed setup instructions
-├── METHODOLOGY.md             # Calculation methodology
-└── EXPECTED_OUTPUTS.md        # Output documentation
-```
+## 🗂️ Data Sources
 
-## 📈 Output Files
+- **Housing**: MagicBricks property listings (51 files, 50 cities)
+- **Grocery**: Blinkit online grocery prices (41 files, 41 cities)
+- **Transport**: Uber per-km pricing + fuel prices (50 cities)
+- **Healthcare**: General physician consultation fees (50 cities)
+- **Education**: Tutor hourly rates (60,233 listings, 50 cities)
+- **Utilities**: Electricity rates (50 cities)
+- **Entertainment**: Movie tickets + restaurant prices (50 cities)
 
-After running the analysis:
+## 🎯 Use Cases
 
-1. **cost_index_results.csv** - Complete dataset with all indices
-2. **visualizations/** folder:
-   - `top_bottom_cities.png` - Most expensive vs affordable cities
-   - `component_breakdown.png` - Cost breakdown by component
-   - `distribution.png` - Statistical distributions
-   - `heatmap.png` - Component heatmap for top cities
+- **Individuals**: Make informed relocation decisions
+- **Companies**: Set location-based salaries
+- **Researchers**: Study urban economics
+- **Policy Makers**: Identify affordability gaps
 
-## 🔍 Key Features
-
-- **Weighted Index**: Reflects real household expenditure patterns
-- **Missing Data Handling**: Automatic median imputation
-- **City Name Normalization**: Handles variations in city names
-- **Multiple Visualizations**: 4 different chart types
-- **Comprehensive Output**: CSV export with all metrics
-- **Interactive Analysis**: Jupyter notebook included
-
-## 📊 Weightage Justification
-
-Based on typical urban household expenditure in India (raw weights re-normalised to 100%):
-- **Groceries (38.70%)**: Daily food consumption — largest household expense
-- **Housing (32.25%)**: Rent/EMI — major fixed cost
-- **Transport (11.61%)**: Daily commute via ride-hailing
-- **Healthcare (6.84%)**: Essential medical services
-- **Restaurants (5.16%)**: Dining out / food delivery
-- **Electricity (3.23%)**: Monthly utility bill
-- **Movies (2.21%)**: Entertainment proxy
-
-## 🧪 Testing
-
-Verify your setup before running:
-```bash
-python test_data.py
-```
-
-## 📖 Documentation
-
-- **SETUP.md** - Installation and troubleshooting
-- **METHODOLOGY.md** - Detailed calculation methodology
-- **EXPECTED_OUTPUTS.md** - Sample outputs and interpretation
-
-## 🎓 Use Cases
-
-- **Individuals**: Compare living costs before relocation
-- **Businesses**: Set location-based compensation
-- **Researchers**: Urban economics analysis
-- **Policy Makers**: Urban planning insights
-
-## ⚙️ Requirements
-
-- Python 3.8+
-- pandas
-- openpyxl
-- numpy
-- matplotlib
-- seaborn
-
-## 📝 Example Output
-
-```
-Most Expensive City: Mumbai (Index = 125.34)
-Most Affordable City: Patna (Index = 62.18)
-Base City: Delhi (Index = 100.00)
-```
-
-## 🔄 Future Enhancements
-
-- Add more expense categories (education, utilities)
-- Temporal analysis (track changes over time)
-- Quality-of-life metrics integration
-- Income vs cost affordability analysis
-- Regional clustering
-
-## 📄 License
+## 📝 License
 
 This project is for educational and research purposes.
 
 ## 🤝 Contributing
 
-Feel free to fork, improve, and submit pull requests!
+Contributions are welcome! Please see the documentation for guidelines.
+
+## 📧 Contact
+
+For questions or issues, refer to the documentation in the `docs/` folder.
+
+---
+
+**Last Updated**: April 2026  
+**Status**: ✅ Complete and Ready to Use
