@@ -2,7 +2,7 @@
 
 A comprehensive data analysis project that calculates and visualizes the cost of living across 50 major Indian cities using real-world data from multiple sources.
 
-## 🎯 Quick Start
+## Quick Start
 
 ```bash
 # Run the complete analysis
@@ -13,7 +13,7 @@ cd src
 python3 main.py
 ```
 
-## 🌐 Interactive City Recommender
+## Interactive City Recommender
 
 Launch the smart city recommender web application:
 
@@ -21,24 +21,24 @@ Launch the smart city recommender web application:
 streamlit run website/app.py
 ```
 
-**What it does:**
+What it does:
 - Find cities matching YOUR specific cost priorities
 - Select "Must be cheap", "Don't care", or "Can be expensive" for each category
 - Get ranked recommendations with detailed explanations
 - View cost breakdowns for all 50 cities
 
-**Example:** "I want cheap housing and groceries, but expensive education is OK with me"
+Example: "I want cheap housing and groceries, but expensive education is OK with me"
 → The recommender finds cities with low housing/grocery costs where education can be expensive.
 
 See `docs/WEBSITE_GUIDE.md` for detailed usage instructions.
 
-## 📊 Results
+## Results
 
-- **CSV Report**: `outputs/reports/cost_index_results.csv`
-- **Visualizations**: `outputs/visualizations/`
-- **Documentation**: `docs/`
+- CSV Report: `outputs/reports/cost_index_results.csv`
+- Visualizations: `outputs/visualizations/`
+- Documentation: `docs/`
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 ├── data/                    # All data files
@@ -76,20 +76,19 @@ See `docs/WEBSITE_GUIDE.md` for detailed usage instructions.
 │   └── ... (more docs)
 │
 └── tests/                   # Test files
-
 ```
 
-## 📈 Key Features
+## Key Features
 
-- ✅ **50 Indian cities** analyzed
-- ✅ **8 cost components** tracked (Housing, Grocery, Transport, Healthcare, Education, Restaurant, Electricity, Movies)
-- ✅ **94+ data files** processed
-- ✅ **Weighted index** calculation (Delhi = 100)
-- ✅ **Multiple visualizations** generated
-- ✅ **Smart city recommender** with priority-based matching
-- ✅ **ML classification** models included
+- 50 Indian cities analyzed
+- 8 cost components tracked (Housing, Grocery, Transport, Healthcare, Education, Restaurant, Electricity, Movies)
+- 94+ data files processed
+- Weighted index calculation (Delhi = 100)
+- Multiple visualizations generated
+- Smart city recommender with priority-based matching
+- ML classification models included
 
-## 🎨 Component Weights
+## Component Weights
 
 The cost of living index uses the following normalized weights:
 
@@ -104,23 +103,23 @@ The cost of living index uses the following normalized weights:
 | Electricity | 3.03% |
 | Movies | 2.07% |
 
-## 📊 Sample Results
+## Sample Results
 
-**Top 5 Most Expensive Cities:**
+Top 5 Most Expensive Cities:
 1. Mumbai - 167.85
 2. Bengaluru - 109.64
 3. Kozhikode - 101.16
 4. Hyderabad - 100.18
 5. Delhi - 100.00 (Base)
 
-**Top 5 Most Affordable Cities:**
+Top 5 Most Affordable Cities:
 1. Malappuram - 61.83
 2. Sangli - 65.86
 3. Jamnagar - 67.56
 4. Surat - 68.01
 5. Asansol - 68.30
 
-## 🔧 Requirements
+## Requirements
 
 ```bash
 pip install -r requirements.txt
@@ -131,47 +130,47 @@ Or install individually:
 pip install pandas numpy matplotlib seaborn openpyxl streamlit
 ```
 
-## 📚 Documentation
+## Documentation
 
 See the `docs/` folder for detailed documentation:
-- **WEBSITE_GUIDE.md** - City recommender web interface guide
-- **SETUP.md** - Installation and setup instructions
-- **METHODOLOGY.md** - Calculation methodology and formulas
-- **EXPECTED_OUTPUTS.md** - Output interpretation guide
-- **EDUCATION_INTEGRATION.md** - Education component details
-- **DATA_PROCESSING_REPORT.md** - Complete data processing documentation
-- **ML_APPLICATIONS.md** - Machine learning applications
+- WEBSITE_GUIDE.md - City recommender web interface guide
+- SETUP.md - Installation and setup instructions
+- METHODOLOGY.md - Calculation methodology and formulas
+- EXPECTED_OUTPUTS.md - Output interpretation guide
+- EDUCATION_INTEGRATION.md - Education component details
+- DATA_PROCESSING_REPORT.md - Complete data processing documentation
+- ML_APPLICATIONS.md - Machine learning applications
 
-## 🗂️ Data Sources
+## Data Sources
 
-- **Housing**: MagicBricks property listings (51 files, 50 cities)
-- **Grocery**: Blinkit online grocery prices (41 files, 41 cities)
-- **Transport**: Uber per-km pricing + fuel prices (50 cities)
-- **Healthcare**: General physician consultation fees (50 cities)
-- **Education**: Tutor hourly rates (60,233 listings, 50 cities)
-- **Utilities**: Electricity rates (50 cities)
-- **Entertainment**: Movie tickets + restaurant prices (50 cities)
+- Housing: MagicBricks property listings (51 files, 50 cities)
+- Grocery: Blinkit online grocery prices (41 files, 41 cities)
+- Transport: Uber per-km pricing + fuel prices (50 cities)
+- Healthcare: General physician consultation fees (50 cities)
+- Education: Tutor hourly rates (60,233 listings, 50 cities)
+- Utilities: Electricity rates (50 cities)
+- Entertainment: Movie tickets + restaurant prices (50 cities)
 
-## 🎯 Use Cases
+## Use Cases
 
-- **Individuals**: Make informed relocation decisions
-- **Companies**: Set location-based salaries
-- **Researchers**: Study urban economics
-- **Policy Makers**: Identify affordability gaps
+- Individuals: Make informed relocation decisions
+- Companies: Set location-based salaries
+- Researchers: Study urban economics
+- Policy Makers: Identify affordability gaps
 
-## 📝 License
+## License
 
 This project is for educational and research purposes.
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome! Please see the documentation for guidelines.
+Contributions are welcome. Please see the documentation for guidelines.
 
-## 📧 Contact
+## Contact
 
 For questions or issues, refer to the documentation in the `docs/` folder.
 
 ---
 
-**Last Updated**: April 2026  
-**Status**: ✅ Complete and Ready to Use
+Last Updated: April 2026
+Status: Complete and Ready to Use
