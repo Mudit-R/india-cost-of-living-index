@@ -13,6 +13,25 @@ cd src
 python3 main.py
 ```
 
+## 🌐 Interactive City Recommender
+
+Launch the smart city recommender web application:
+
+```bash
+streamlit run website/app.py
+```
+
+**What it does:**
+- Find cities matching YOUR specific cost priorities
+- Select "Must be cheap", "Don't care", or "Can be expensive" for each category
+- Get ranked recommendations with detailed explanations
+- View cost breakdowns for all 50 cities
+
+**Example:** "I want cheap housing and groceries, but expensive education is OK with me"
+→ The recommender finds cities with low housing/grocery costs where education can be expensive.
+
+See `docs/WEBSITE_GUIDE.md` for detailed usage instructions.
+
 ## 📊 Results
 
 - **CSV Report**: `outputs/reports/cost_index_results.csv`
@@ -41,6 +60,10 @@ python3 main.py
 │   ├── ml_classification.py # ML models
 │   └── city-recommendation/ # Recommendation system
 │
+├── website/                 # Smart city recommender
+│   ├── app.py              # Streamlit web interface
+│   └── recommender.py      # Priority-based matching logic
+│
 ├── outputs/                 # Generated outputs
 │   ├── visualizations/     # All charts & graphs
 │   └── reports/            # CSV results
@@ -49,6 +72,7 @@ python3 main.py
 │   ├── README.md           # Detailed project info
 │   ├── METHODOLOGY.md      # Calculation methodology
 │   ├── SETUP.md            # Installation guide
+│   ├── WEBSITE_GUIDE.md    # City recommender guide
 │   └── ... (more docs)
 │
 └── tests/                   # Test files
@@ -62,8 +86,8 @@ python3 main.py
 - ✅ **94+ data files** processed
 - ✅ **Weighted index** calculation (Delhi = 100)
 - ✅ **Multiple visualizations** generated
+- ✅ **Smart city recommender** with priority-based matching
 - ✅ **ML classification** models included
-- ✅ **City recommendation** system
 
 ## 🎨 Component Weights
 
@@ -99,16 +123,23 @@ The cost of living index uses the following normalized weights:
 ## 🔧 Requirements
 
 ```bash
-pip install pandas numpy matplotlib seaborn openpyxl
+pip install -r requirements.txt
+```
+
+Or install individually:
+```bash
+pip install pandas numpy matplotlib seaborn openpyxl streamlit
 ```
 
 ## 📚 Documentation
 
 See the `docs/` folder for detailed documentation:
+- **WEBSITE_GUIDE.md** - City recommender web interface guide
 - **SETUP.md** - Installation and setup instructions
 - **METHODOLOGY.md** - Calculation methodology and formulas
 - **EXPECTED_OUTPUTS.md** - Output interpretation guide
 - **EDUCATION_INTEGRATION.md** - Education component details
+- **DATA_PROCESSING_REPORT.md** - Complete data processing documentation
 - **ML_APPLICATIONS.md** - Machine learning applications
 
 ## 🗂️ Data Sources

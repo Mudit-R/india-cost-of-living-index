@@ -75,34 +75,128 @@ class DataLoader:
         return result[['City', 'doctor_fee']]
     
     def load_blinkit_data(self, folder="../data/raw/grocery/blinkit_citywise"):
-        """Load grocery prices from Blinkit data with outlier removal"""
-        city_prices = []
+        """Load grocery prices from Blinkit data using product-level price comparison.
+        
+        Instead of using median prices, this method:
+        1. Identifies common products across cities
+        2. Compares prices for the same products
+        3. Calculates average price ratio relative to Delhi
+        """
+        import re
+        
+        # First pass: Load all data and normalize product names
+        city_data = {}
         
         for file in glob.glob(f"{folder}/*.xlsx"):
             city_name = Path(file).stem.replace('blinkit_', '').title()
             try:
                 df = pd.read_excel(file)
                 if len(df) > 0 and len(df.columns) >= 2:
-                    # Assume price is in second column
-                    prices = pd.to_numeric(df.iloc[:, 1], errors='coerce').dropna()
-                    if len(prices) > 0:
-                        # Remove outliers using IQR method
-                        Q1 = prices.quantile(0.25)
-                        Q3 = prices.quantile(0.75)
-                        IQR = Q3 - Q1
-                        lower_bound = Q1 - 1.5 * IQR
-                        upper_bound = Q3 + 1.5 * IQR
-                        prices_clean = prices[(prices >= lower_bound) & (prices <= upper_bound)]
-                        
-                        if len(prices_clean) > 0:
-                            avg_price = prices_clean.median()  # Use median for robustness
-                            city_prices.append({'City': city_name, 'grocery_price': avg_price})
+                    # Get product names and prices
+                    products = df.iloc[:, 0].astype(str)
+                    
+                    # Try to find price column (could be column 1 or 2)
+                    price_col = None
+                    for col_idx in [1, 2]:
+                        if col_idx < len(df.columns):
+                            col_name = str(df.columns[col_idx]).lower()
+                            if 'discount' in col_name or 'price' in col_name:
+                                # Prefer discounted price if available
+                                if 'discount' in col_name:
+                                    price_col = col_idx
+                                    break
+                                elif price_col is None:
+                                    price_col = col_idx
+                    
+                    if price_col is None:
+                        price_col = 1  # Default to second column
+                    
+                    prices = pd.to_numeric(df.iloc[:, price_col], errors='coerce')
+                    
+                    # Create product-price mapping
+                    product_prices = {}
+                    for prod, price in zip(products, prices):
+                        if pd.notna(price) and price > 0:
+                            # Normalize product name for matching
+                            # Remove regional names in parentheses, keep base product
+                            normalized = re.sub(r'\s*\([^)]*\)', '', str(prod))
+                            normalized = normalized.strip().lower()
+                            
+                            # Store with original name for reference
+                            product_prices[normalized] = {
+                                'price': price,
+                                'original_name': prod
+                            }
+                    
+                    city_data[city_name] = product_prices
+                    
             except Exception as e:
                 print(f"Error loading {file}: {e}")
         
-        df = pd.DataFrame(city_prices)
-        self.cities.update(df['City'].tolist())
-        return df
+        # Second pass: Find common products and calculate price ratios
+        if 'Delhi' not in city_data:
+            print("Warning: Delhi data not found, using first city as base")
+            base_city = list(city_data.keys())[0]
+        else:
+            base_city = 'Delhi'
+        
+        base_products = city_data[base_city]
+        
+        # Calculate grocery index for each city
+        city_indices = []
+        
+        for city_name, city_products in city_data.items():
+            # Find common products between this city and base city
+            common_products = set(base_products.keys()) & set(city_products.keys())
+            
+            if len(common_products) < 5:
+                # Not enough common products, skip this city
+                continue
+            
+            # Calculate price ratios for common products
+            price_ratios = []
+            for product in common_products:
+                base_price = base_products[product]['price']
+                city_price = city_products[product]['price']
+                
+                if base_price > 0:
+                    ratio = city_price / base_price
+                    # Filter out extreme outliers (likely data errors)
+                    if 0.1 < ratio < 10:  # Reasonable price variation range
+                        price_ratios.append(ratio)
+            
+            if len(price_ratios) >= 3:
+                # Calculate average price ratio (mean of ratios)
+                avg_ratio = np.mean(price_ratios)
+                
+                # Convert to price relative to base city
+                # If base city average is 100, this city's average is:
+                relative_price = avg_ratio * 100
+                
+                city_indices.append({
+                    'City': city_name,
+                    'grocery_price': relative_price,
+                    'common_products': len(common_products),
+                    'price_ratios_used': len(price_ratios)
+                })
+        
+        df = pd.DataFrame(city_indices)
+        
+        # Normalize so Delhi = 100 (or base city = 100)
+        if not df.empty:
+            base_value = df[df['City'] == base_city]['grocery_price'].values[0]
+            df['grocery_price'] = (df['grocery_price'] / base_value) * 100
+            
+            self.cities.update(df['City'].tolist())
+            
+            # Print summary
+            print(f"\nGrocery Price Comparison Summary:")
+            print(f"  Base city: {base_city}")
+            print(f"  Cities with data: {len(df)}")
+            print(f"  Avg common products: {df['common_products'].mean():.0f}")
+            print(f"  Method: Product-level price comparison")
+        
+        return df[['City', 'grocery_price']]
     
     def load_electricity_prices(self, filepath="../data/raw/utilities/Electricity Price.xlsx"):
         """Load electricity rates (₹/unit) per city"""
@@ -255,56 +349,45 @@ class DataLoader:
             self.cities.update(result['City'].tolist())
         return result
 
-    def load_housing_data(self, folder="../data/raw/housing/magic_bricks_data"):
+    def load_housing_data(self, folder="../data/raw/Magic Bricks data"):
         """Load housing prices from MagicBricks data.
-        Uses P25 (lower quartile) to represent affordable/typical housing,
-        since MagicBricks skews toward premium listings in many cities.
+        Uses median price_per_sq_ft with outlier removal for robustness.
         """
         city_prices = []
 
-        def _extract_price(file, is_csv=False):
+        def _extract_price(file):
             try:
-                df = pd.read_csv(file) if is_csv else pd.read_excel(file)
-                # Prefer price_per_sq_ft — removes size bias across cities
+                df = pd.read_csv(file)
+                
+                # Use price_per_sq_ft column
                 if 'price_per_sq_ft' in df.columns:
-                    col = 'price_per_sq_ft'
-                else:
-                    # fallback to total price if column missing
-                    price_cols = [c for c in df.columns
-                                  if 'price' in c.lower() and 'sq' not in c.lower()]
-                    if not price_cols:
+                    prices = pd.to_numeric(df['price_per_sq_ft'], errors='coerce').dropna()
+                    prices = prices[prices > 0]
+                    
+                    if len(prices) < 5:
                         return None
-                    col = price_cols[0]
-
-                prices = pd.to_numeric(df[col], errors='coerce').dropna()
-                prices = prices[prices > 0]
-                if len(prices) < 5:
+                    
+                    # IQR outlier removal
+                    Q1, Q3 = prices.quantile(0.25), prices.quantile(0.75)
+                    IQR = Q3 - Q1
+                    clean = prices[(prices >= Q1 - 1.5*IQR) & (prices <= Q3 + 1.5*IQR)]
+                    
+                    return float(clean.median()) if len(clean) > 0 else None
+                else:
                     return None
-                # IQR outlier removal
-                Q1, Q3 = prices.quantile(0.25), prices.quantile(0.75)
-                IQR = Q3 - Q1
-                clean = prices[(prices >= Q1 - 1.5*IQR) & (prices <= Q3 + 1.5*IQR)]
-                return float(clean.median()) if len(clean) > 0 else None
             except Exception as e:
                 print(f"Error loading {file}: {e}")
                 return None
 
-        for file in glob.glob(f"{folder}/*.xlsx"):
-            city_name = (Path(file).stem.title()
-                         .replace(' Magicbricks', '').replace(' Magic Bricks', '').strip())
+        # Load all CSV files with new naming format: CityName_magicbricks.csv
+        for file in glob.glob(f"{folder}/*_magicbricks.csv"):
+            # Extract city name from filename (e.g., "Delhi_magicbricks.csv" -> "Delhi")
+            city_name = Path(file).stem.replace('_magicbricks', '').strip()
             price = _extract_price(file)
             if price:
                 city_prices.append({'City': city_name, 'housing_price': price})
 
-        for file in glob.glob(f"{folder}/*.csv"):
-            city_name = (Path(file).stem
-                         .replace(' magic bricks csv', '').replace(' magicbricks csv', '')
-                         .replace(' MagicBricks', '').replace(' Magicbricks', '')
-                         .replace('Mysuru:Mysore', 'Mysuru').strip().title())
-            price = _extract_price(file, is_csv=True)
-            if price:
-                city_prices.append({'City': city_name, 'housing_price': price})
-
         df = pd.DataFrame(city_prices)
-        self.cities.update(df['City'].tolist())
+        if not df.empty:
+            self.cities.update(df['City'].tolist())
         return df
