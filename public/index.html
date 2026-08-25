@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>India City Cost Recommender | Custom Cost of Living Index</title>
-  <meta name="description" content="Find the best Indian city matching your custom spending priorities across 8 expense categories using real-world data and custom index weighting.">
+  <title>India Cost of Living & City Intelligence Platform</title>
+  <meta name="description" content="Comprehensive Cost of Living Index, City Recommender, Salary Equivalency Calculator, and Comparative Analytics across 50 Indian Cities.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -21,273 +21,473 @@
   <header class="top-nav">
     <div class="nav-container">
       <div class="logo">
-        <span class="logo-mark">🏙️</span>
         <span class="logo-text">India Cost Index</span>
       </div>
-      <div class="nav-links">
-        <a href="#how-it-works" class="nav-link">How It Works</a>
-        <a href="#weights-section" class="nav-link">Priority Sliders</a>
-        <a href="#results-section" class="nav-link">Recommendations</a>
-        <a href="#all-cities-section" class="nav-link">All 50 Cities</a>
-      </div>
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab active" data-tab="tab-recommender" role="tab" aria-selected="true">
+          <i data-lucide="sliders" class="icon-micro"></i> City Recommender
+        </button>
+        <button class="nav-tab" data-tab="tab-salary" role="tab" aria-selected="false">
+          <i data-lucide="calculator" class="icon-micro"></i> Salary Calculator
+        </button>
+        <button class="nav-tab" data-tab="tab-compare" role="tab" aria-selected="false">
+          <i data-lucide="git-compare" class="icon-micro"></i> City Comparator
+        </button>
+      </nav>
     </div>
   </header>
 
   <!-- Main Content Container -->
   <main class="page-wrapper">
     
-    <!-- Hero Header -->
-    <section class="hero-section">
-      <h1 class="main-title">City Cost Recommender</h1>
-      <p class="subtitle">Find Indian cities that match your custom priorities by shaping your own Cost of Living Index.</p>
-    </section>
-
-    <!-- Info Box Accordion -->
-    <section class="info-accordion-section" id="how-it-works">
-      <details class="editorial-accordion" id="how-it-works-details">
-        <summary class="accordion-header">
-          <span class="accordion-title">
-            <i data-lucide="help-circle" class="icon-small"></i> How This Tool Works
-          </span>
-          <i data-lucide="chevron-down" class="accordion-arrow"></i>
-        </summary>
-        <div class="accordion-content">
-          <div class="info-box">
-            <h3 class="info-title">About the Custom Weights</h3>
-            <p class="info-text">
-              This tool scales the standard household component weights based on your preferences to create a personalized Index.
-            </p>
-            <div class="multiplier-guide">
-              <strong>For each category, use the slider to set its weight multiplier (1 to 10):</strong>
-              <ul>
-                <li><strong>1 : </strong> 0.1x weight (unimportant / low priority)</li>
-                <li><strong>5 : </strong> 1.0x weight (normal, baseline national weights)</li>
-                <li><strong>10 : </strong> 2.0x weight (very important / highest priority)</li>
-              </ul>
-            </div>
-            <p class="info-footer-note">
-              <strong>Categories analyzed:</strong> Housing, Grocery, Transport, Healthcare, Education, Electricity, Restaurant, Movies.<br>
-              <strong>Index scale:</strong> Delhi = 100 (baseline). Lower values indicate greater affordability.
-            </p>
-          </div>
-        </div>
-      </details>
-    </section>
-
-    <!-- Sliders Form Section -->
-    <section class="weights-section" id="weights-section">
-      <div class="section-header-row">
-        <h2 class="section-heading">Set Component Weights</h2>
-        <button type="button" class="btn-reset" id="btn-reset-weights" title="Reset all sliders to baseline 5">
-          <i data-lucide="rotate-ccw" class="icon-micro"></i> Reset Defaults
-        </button>
-      </div>
-
-      <form id="weights-form" onsubmit="return false;">
-        <div class="sliders-grid">
-          
-          <!-- Column 1 -->
-          <div class="sliders-col">
-            
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label for="slider-Housing" class="slider-label">Housing Weight</label>
-                <span class="slider-val-badge" id="val-Housing">5</span>
-              </div>
-              <input type="range" min="1" max="10" value="5" step="1" id="slider-Housing" class="custom-range" data-category="Housing">
-              <span class="slider-help">Property prices and rent costs</span>
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label for="slider-Grocery" class="slider-label">Grocery Weight</label>
-                <span class="slider-val-badge" id="val-Grocery">5</span>
-              </div>
-              <input type="range" min="1" max="10" value="5" step="1" id="slider-Grocery" class="custom-range" data-category="Grocery">
-              <span class="slider-help">Daily food and grocery shopping</span>
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label for="slider-Transport" class="slider-label">Transport Weight</label>
-                <span class="slider-val-badge" id="val-Transport">5</span>
-              </div>
-              <input type="range" min="1" max="10" value="5" step="1" id="slider-Transport" class="custom-range" data-category="Transport">
-              <span class="slider-help">Uber/taxi and fuel costs</span>
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label for="slider-Healthcare" class="slider-label">Healthcare Weight</label>
-                <span class="slider-val-badge" id="val-Healthcare">5</span>
-              </div>
-              <input type="range" min="1" max="10" value="5" step="1" id="slider-Healthcare" class="custom-range" data-category="Healthcare">
-              <span class="slider-help">Doctor consultation fees</span>
-            </div>
-
-          </div>
-
-          <!-- Column 2 -->
-          <div class="sliders-col">
-            
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label for="slider-Education" class="slider-label">Education Weight</label>
-                <span class="slider-val-badge" id="val-Education">5</span>
-              </div>
-              <input type="range" min="1" max="10" value="5" step="1" id="slider-Education" class="custom-range" data-category="Education">
-              <span class="slider-help">Tutor and coaching fees</span>
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label for="slider-Electricity" class="slider-label">Electricity Weight</label>
-                <span class="slider-val-badge" id="val-Electricity">5</span>
-              </div>
-              <input type="range" min="1" max="10" value="5" step="1" id="slider-Electricity" class="custom-range" data-category="Electricity">
-              <span class="slider-help">Utility and electricity costs</span>
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label for="slider-Restaurant" class="slider-label">Restaurant Weight</label>
-                <span class="slider-val-badge" id="val-Restaurant">5</span>
-              </div>
-              <input type="range" min="1" max="10" value="5" step="1" id="slider-Restaurant" class="custom-range" data-category="Restaurant">
-              <span class="slider-help">Dining out costs</span>
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label for="slider-Movies" class="slider-label">Movies Weight</label>
-                <span class="slider-val-badge" id="val-Movies">5</span>
-              </div>
-              <input type="range" min="1" max="10" value="5" step="1" id="slider-Movies" class="custom-range" data-category="Movies">
-              <span class="slider-help">Entertainment and movie tickets</span>
-            </div>
-
-          </div>
-
-        </div>
-
-        <!-- Top N & Action Row -->
-        <div class="controls-action-bar">
-          <div class="top-n-selector">
-            <label for="select-top-n" class="selector-label">Number of recommendations:</label>
-            <select id="select-top-n" class="custom-select">
-              <option value="3">Top 3 Cities</option>
-              <option value="5">Top 5 Cities</option>
-              <option value="10" selected>Top 10 Cities</option>
-              <option value="15">Top 15 Cities</option>
-              <option value="20">Top 20 Cities</option>
-            </select>
-          </div>
-
-          <div class="action-btn-container">
-            <button type="button" class="btn-calculate" id="btn-calculate">
-              <span>Calculate My Index</span>
-              <i data-lucide="arrow-right" class="icon-small"></i>
-            </button>
-          </div>
-        </div>
-
-      </form>
-    </section>
-
-    <!-- Results Section -->
-    <section class="results-section" id="results-section">
+    <!-- ==========================================
+         TAB 1: CITY RECOMMENDER
+         ========================================== -->
+    <section id="tab-recommender" class="tab-panel active">
       
-      <!-- Weights Summary Breakdown -->
-      <div class="weights-breakdown-card">
-        <h3 class="subsection-title">Your Custom Index Weights</h3>
-        <p class="subsection-desc">Calculated component contribution redistributed based on your slider settings.</p>
-        <div class="table-responsive">
-          <table class="weights-table" id="weights-table">
-            <thead>
-              <tr>
-                <th>Category</th>
-                <th>Baseline Weight</th>
-                <th>Your Multiplier</th>
-                <th>Effective Weight</th>
-              </tr>
-            </thead>
-            <tbody id="weights-table-body">
-              <!-- Populated via app.js -->
-            </tbody>
-          </table>
-        </div>
+      <!-- Hero Header -->
+      <div class="hero-section">
+        <h1 class="main-title">City Cost Recommender</h1>
+        <p class="subtitle">Find Indian cities that match your custom priorities by shaping your own Cost of Living Index.</p>
       </div>
 
-      <!-- Interactive Map -->
-      <div class="map-section-wrapper">
-        <h3 class="subsection-title">Top Recommended Cities on Map</h3>
-        <p class="subsection-desc">Geographic distribution of your best matching Indian cities.</p>
-        <div id="city-map" class="interactive-map"></div>
-      </div>
-
-      <!-- Ranked Cities List -->
-      <div class="recommendations-list-wrapper">
-        <div class="recommendations-header-row">
-          <h2 class="section-heading" id="results-count-heading">Top Recommended Cities</h2>
-          <span class="badge-tag">Sorted by Affordability</span>
-        </div>
-
-        <div id="city-cards-container" class="city-cards-container">
-          <!-- Populated via app.js -->
-        </div>
-      </div>
-
-      <!-- Complete 50 Cities Ranking Section -->
-      <div class="all-cities-section" id="all-cities-section">
-        <details class="editorial-accordion" id="all-cities-accordion">
+      <!-- Info Box Accordion -->
+      <div class="info-accordion-section" id="how-it-works">
+        <details class="editorial-accordion" id="how-it-works-details">
           <summary class="accordion-header">
             <span class="accordion-title">
-              <i data-lucide="list-ordered" class="icon-small"></i> View Complete Ranking of All 50 Cities
+              <i data-lucide="help-circle" class="icon-small"></i> How This Tool Works
             </span>
             <i data-lucide="chevron-down" class="accordion-arrow"></i>
           </summary>
           <div class="accordion-content">
-            <div class="all-cities-card">
-              <div class="search-sort-bar">
-                <div class="search-box">
-                  <i data-lucide="search" class="icon-micro"></i>
-                  <input type="text" id="filter-city-input" placeholder="Search city name..." class="search-input">
-                </div>
-                <div class="table-note">
-                  Baseline Delhi = 100
-                </div>
+            <div class="info-box">
+              <h3 class="info-title">About the Custom Weights</h3>
+              <p class="info-text">
+                This tool scales the standard household component weights based on your preferences to create a personalized Index.
+              </p>
+              <div class="multiplier-guide">
+                <strong>For each category, use the slider to set its weight multiplier (1 to 10):</strong>
+                <ul>
+                  <li><strong>1 : </strong> 0.1x weight (unimportant / low priority)</li>
+                  <li><strong>5 : </strong> 1.0x weight (normal, baseline national weights)</li>
+                  <li><strong>10 : </strong> 2.0x weight (very important / highest priority)</li>
+                </ul>
               </div>
-
-              <div class="table-responsive">
-                <table class="all-cities-table" id="all-cities-table">
-                  <thead>
-                    <tr>
-                      <th>Rank</th>
-                      <th>City</th>
-                      <th>Custom Index</th>
-                      <th>Baseline Index</th>
-                      <th>Housing</th>
-                      <th>Grocery</th>
-                      <th>Transport</th>
-                    </tr>
-                  </thead>
-                  <tbody id="all-cities-tbody">
-                    <!-- Populated via app.js -->
-                  </tbody>
-                </table>
-              </div>
+              <p class="info-footer-note">
+                <strong>Categories analyzed:</strong> Housing, Grocery, Transport, Healthcare, Education, Electricity, Restaurant, Movies.<br>
+                <strong>Index scale:</strong> Delhi = 100 (baseline). Lower values indicate greater affordability.
+              </p>
             </div>
           </div>
         </details>
+      </div>
+
+      <!-- Priority Presets Bar -->
+      <div class="presets-section">
+        <span class="presets-label">Quick Lifestyle Presets:</span>
+        <div class="presets-chips">
+          <button type="button" class="preset-chip" data-preset="tech">Tech & Remote</button>
+          <button type="button" class="preset-chip" data-preset="family">Growing Family</button>
+          <button type="button" class="preset-chip" data-preset="frugal">Frugal & FIRE</button>
+          <button type="button" class="preset-chip" data-preset="student">Student & Early Career</button>
+          <button type="button" class="preset-chip" data-preset="balanced">Balanced Baseline</button>
+        </div>
+      </div>
+
+      <!-- Sliders Form Section -->
+      <section class="weights-section" id="weights-section">
+        <div class="section-header-row">
+          <h2 class="section-heading">Set Component Weights</h2>
+          <button type="button" class="btn-reset" id="btn-reset-weights" title="Reset all sliders to baseline 5">
+            <i data-lucide="rotate-ccw" class="icon-micro"></i> Reset Defaults
+          </button>
+        </div>
+
+        <form id="weights-form" onsubmit="return false;">
+          <div class="sliders-grid">
+            
+            <!-- Column 1 -->
+            <div class="sliders-col">
+              
+              <div class="slider-group">
+                <div class="slider-label-row">
+                  <label for="slider-Housing" class="slider-label">Housing Weight</label>
+                  <span class="slider-val-badge" id="val-Housing">5</span>
+                </div>
+                <input type="range" min="1" max="10" value="5" step="1" id="slider-Housing" class="custom-range" data-category="Housing">
+                <span class="slider-help">Property prices and rent costs</span>
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-label-row">
+                  <label for="slider-Grocery" class="slider-label">Grocery Weight</label>
+                  <span class="slider-val-badge" id="val-Grocery">5</span>
+                </div>
+                <input type="range" min="1" max="10" value="5" step="1" id="slider-Grocery" class="custom-range" data-category="Grocery">
+                <span class="slider-help">Daily food and grocery shopping</span>
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-label-row">
+                  <label for="slider-Transport" class="slider-label">Transport Weight</label>
+                  <span class="slider-val-badge" id="val-Transport">5</span>
+                </div>
+                <input type="range" min="1" max="10" value="5" step="1" id="slider-Transport" class="custom-range" data-category="Transport">
+                <span class="slider-help">Uber/taxi and fuel costs</span>
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-label-row">
+                  <label for="slider-Healthcare" class="slider-label">Healthcare Weight</label>
+                  <span class="slider-val-badge" id="val-Healthcare">5</span>
+                </div>
+                <input type="range" min="1" max="10" value="5" step="1" id="slider-Healthcare" class="custom-range" data-category="Healthcare">
+                <span class="slider-help">Doctor consultation fees</span>
+              </div>
+
+            </div>
+
+            <!-- Column 2 -->
+            <div class="sliders-col">
+              
+              <div class="slider-group">
+                <div class="slider-label-row">
+                  <label for="slider-Education" class="slider-label">Education Weight</label>
+                  <span class="slider-val-badge" id="val-Education">5</span>
+                </div>
+                <input type="range" min="1" max="10" value="5" step="1" id="slider-Education" class="custom-range" data-category="Education">
+                <span class="slider-help">Tutor and coaching fees</span>
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-label-row">
+                  <label for="slider-Electricity" class="slider-label">Electricity Weight</label>
+                  <span class="slider-val-badge" id="val-Electricity">5</span>
+                </div>
+                <input type="range" min="1" max="10" value="5" step="1" id="slider-Electricity" class="custom-range" data-category="Electricity">
+                <span class="slider-help">Utility and electricity costs</span>
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-label-row">
+                  <label for="slider-Restaurant" class="slider-label">Restaurant Weight</label>
+                  <span class="slider-val-badge" id="val-Restaurant">5</span>
+                </div>
+                <input type="range" min="1" max="10" value="5" step="1" id="slider-Restaurant" class="custom-range" data-category="Restaurant">
+                <span class="slider-help">Dining out costs</span>
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-label-row">
+                  <label for="slider-Movies" class="slider-label">Movies Weight</label>
+                  <span class="slider-val-badge" id="val-Movies">5</span>
+                </div>
+                <input type="range" min="1" max="10" value="5" step="1" id="slider-Movies" class="custom-range" data-category="Movies">
+                <span class="slider-help">Entertainment and movie tickets</span>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Top N & Action Row -->
+          <div class="controls-action-bar">
+            <div class="top-n-selector">
+              <label for="select-top-n" class="selector-label">Number of recommendations:</label>
+              <select id="select-top-n" class="custom-select">
+                <option value="3">Top 3 Cities</option>
+                <option value="5">Top 5 Cities</option>
+                <option value="10" selected>Top 10 Cities</option>
+                <option value="15">Top 15 Cities</option>
+                <option value="20">Top 20 Cities</option>
+              </select>
+            </div>
+
+            <div class="action-btn-container">
+              <button type="button" class="btn-calculate" id="btn-calculate">
+                <span>Calculate My Index</span>
+                <i data-lucide="arrow-right" class="icon-small"></i>
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- Results Section -->
+      <div class="results-section" id="results-section">
+        
+        <!-- Weights Summary Breakdown -->
+        <div class="weights-breakdown-card">
+          <h3 class="subsection-title">Your Custom Index Weights</h3>
+          <p class="subsection-desc">Calculated component contribution redistributed based on your slider settings.</p>
+          <div class="table-responsive">
+            <table class="weights-table" id="weights-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Baseline Weight</th>
+                  <th>Your Multiplier</th>
+                  <th>Effective Weight</th>
+                </tr>
+              </thead>
+              <tbody id="weights-table-body">
+                <!-- Populated via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Interactive Map -->
+        <div class="map-section-wrapper">
+          <h3 class="subsection-title">Top Recommended Cities on Map</h3>
+          <p class="subsection-desc">Geographic distribution of your best matching Indian cities.</p>
+          <div id="city-map" class="interactive-map"></div>
+        </div>
+
+        <!-- Ranked Cities List -->
+        <div class="recommendations-list-wrapper">
+          <div class="recommendations-header-row">
+            <h2 class="section-heading" id="results-count-heading">Top Recommended Cities</h2>
+            <span class="badge-tag">Sorted by Affordability</span>
+          </div>
+
+          <div id="city-cards-container" class="city-cards-container">
+            <!-- Populated via app.js -->
+          </div>
+        </div>
+
+        <!-- Complete 50 Cities Ranking Section -->
+        <div class="all-cities-section" id="all-cities-section">
+          <details class="editorial-accordion" id="all-cities-accordion">
+            <summary class="accordion-header">
+              <span class="accordion-title">
+                <i data-lucide="list-ordered" class="icon-small"></i> View Complete Ranking of All 50 Cities
+              </span>
+              <i data-lucide="chevron-down" class="accordion-arrow"></i>
+            </summary>
+            <div class="accordion-content">
+              <div class="all-cities-card">
+                <div class="search-sort-bar">
+                  <div class="search-box">
+                    <i data-lucide="search" class="icon-micro"></i>
+                    <input type="text" id="filter-city-input" placeholder="Search city name..." class="search-input">
+                  </div>
+                  <div class="table-note">
+                    Baseline Delhi = 100
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="all-cities-table" id="all-cities-table">
+                    <thead>
+                      <tr>
+                        <th>Rank</th>
+                        <th>City</th>
+                        <th>Custom Index</th>
+                        <th>Baseline Index</th>
+                        <th>Housing</th>
+                        <th>Grocery</th>
+                        <th>Transport</th>
+                      </tr>
+                    </thead>
+                    <tbody id="all-cities-tbody">
+                      <!-- Populated via app.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         TAB 2: SALARY & RELOCATION CALCULATOR
+         ========================================== -->
+    <section id="tab-salary" class="tab-panel">
+      
+      <div class="hero-section">
+        <h1 class="main-title">Salary & Relocation Parity</h1>
+        <p class="subtitle">Calculate equivalent purchasing power and monthly savings when moving between Indian cities.</p>
+      </div>
+
+      <div class="salary-calculator-container">
+        
+        <div class="salary-inputs-card">
+          <h3 class="card-heading">Relocation Parameters</h3>
+          
+          <div class="salary-form-grid">
+            
+            <div class="form-group">
+              <label for="salary-curr-city" class="form-label">Current City</label>
+              <select id="salary-curr-city" class="custom-select form-control">
+                <!-- Populated via app.js -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="salary-target-city" class="form-label">Target City</label>
+              <select id="salary-target-city" class="custom-select form-control">
+                <!-- Populated via app.js -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="salary-amount" class="form-label">Current Annual CTC (in Lakhs INR / LPA)</label>
+              <input type="number" id="salary-amount" class="custom-input form-control" value="15" min="1" max="500" step="0.5">
+            </div>
+
+          </div>
+
+          <button type="button" class="btn-calculate" id="btn-calculate-salary">
+            <span>Calculate Equivalent Salary</span>
+            <i data-lucide="arrow-right" class="icon-small"></i>
+          </button>
+        </div>
+
+        <!-- Salary Result Output -->
+        <div class="salary-results-card" id="salary-results-card">
+          
+          <div class="salary-hero-grid">
+            <div class="salary-stat-box">
+              <span class="stat-label">Current Salary</span>
+              <div class="stat-value" id="salary-display-curr">15.0 LPA</div>
+              <span class="stat-subtext" id="salary-display-curr-city">in Mumbai</span>
+            </div>
+
+            <div class="salary-stat-box highlighted">
+              <span class="stat-label">Equivalent Salary Needed</span>
+              <div class="stat-value text-accent" id="salary-display-equiv">9.2 LPA</div>
+              <span class="stat-subtext" id="salary-display-target-city">in Pune for identical lifestyle</span>
+            </div>
+
+            <div class="salary-stat-box">
+              <span class="stat-label">Net Monthly Impact</span>
+              <div class="stat-value" id="salary-display-monthly">+Rs 48,333 / mo</div>
+              <span class="stat-subtext" id="salary-display-diff-pct">43.8% lower cost of living</span>
+            </div>
+          </div>
+
+          <div class="salary-breakdown-wrapper">
+            <h4 class="breakdown-title">Expense Category Variance (Target vs Current)</h4>
+            <div class="table-responsive">
+              <table class="weights-table" id="salary-category-table">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Current Index</th>
+                    <th>Target Index</th>
+                    <th>Difference</th>
+                  </tr>
+                </thead>
+                <tbody id="salary-category-tbody">
+                  <!-- Populated via app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         TAB 3: CITY HEAD-TO-HEAD COMPARISON
+         ========================================== -->
+    <section id="tab-compare" class="tab-panel">
+      
+      <div class="hero-section">
+        <h1 class="main-title">City Head-to-Head</h1>
+        <p class="subtitle">Side-by-side cost breakdown and variance analytics between any two Indian cities.</p>
+      </div>
+
+      <div class="compare-container">
+        
+        <div class="compare-selectors-bar">
+          <div class="compare-select-group">
+            <label for="compare-city-a" class="form-label">City A</label>
+            <select id="compare-city-a" class="custom-select">
+              <!-- Populated via app.js -->
+            </select>
+          </div>
+
+          <div class="compare-vs-badge">VS</div>
+
+          <div class="compare-select-group">
+            <label for="compare-city-b" class="form-label">City B</label>
+            <select id="compare-city-b" class="custom-select">
+              <!-- Populated via app.js -->
+            </select>
+          </div>
+        </div>
+
+        <div class="compare-results-wrapper" id="compare-results-wrapper">
+          
+          <div class="compare-summary-cards">
+            <div class="compare-card" id="compare-card-a">
+              <span class="rank-badge">City A</span>
+              <h3 class="city-card-name" id="compare-name-a">Mumbai</h3>
+              <div class="metric-container">
+                <div class="metric-label">Overall Cost Index</div>
+                <div class="metric-value" id="compare-index-a">162.8</div>
+                <div class="metric-delta">Delhi = 100</div>
+              </div>
+            </div>
+
+            <div class="compare-diff-card">
+              <span class="diff-title">Cost Differential</span>
+              <div class="diff-percent" id="compare-diff-val">-41.9%</div>
+              <p class="diff-text" id="compare-diff-desc">Bengaluru is 41.9% more affordable overall than Mumbai.</p>
+            </div>
+
+            <div class="compare-card" id="compare-card-b">
+              <span class="rank-badge">City B</span>
+              <h3 class="city-card-name" id="compare-name-b">Bengaluru</h3>
+              <div class="metric-container">
+                <div class="metric-label">Overall Cost Index</div>
+                <div class="metric-value" id="compare-index-b">114.8</div>
+                <div class="metric-delta">Delhi = 100</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="compare-table-wrapper">
+            <h4 class="breakdown-title">8-Category Side-by-Side Breakdown</h4>
+            <div class="table-responsive">
+              <table class="weights-table" id="compare-table">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th id="compare-th-a">City A Index</th>
+                    <th id="compare-th-b">City B Index</th>
+                    <th>Variance</th>
+                  </tr>
+                </thead>
+                <tbody id="compare-tbody">
+                  <!-- Populated via app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-      <div class="footer-title">Cost of Living Index Analysis</div>
-      <p class="footer-text">50 Indian Cities | 8 Cost Categories | Delhi Baseline = 100</p>
-      <p class="footer-subtext">Data includes: Housing, Grocery, Transport, Healthcare, Education, Electricity, Restaurant, Movies.</p>
+      <div class="footer-title">India Cost of Living Intelligence Platform</div>
+      <p class="footer-text">50 Indian Cities | 8 Cost Dimensions | Delhi Baseline = 100</p>
+      <p class="footer-subtext">Data encompasses: Housing, Grocery, Transport, Healthcare, Education, Utilities, Restaurants, and Entertainment.</p>
     </footer>
 
   </main>

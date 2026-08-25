@@ -1,6 +1,7 @@
 /**
- * India Smart City Cost Recommender - Client Application Engine
- * Blazing-fast client-side recommendation engine & Leaflet mapping
+ * India Smart City Cost Intelligence Platform - Client Application Engine
+ * Pure client-side calculations, Leaflet mapping, Salary PPP, and City Comparator
+ * Strictly zero emojis.
  */
 
 (function() {
@@ -34,13 +35,37 @@
     Movies: 'movie_index'
   };
 
+  // Lifestyle Presets (1 to 10 scale)
+  const PRESETS = {
+    tech: {
+      Housing: 9, Transport: 8, Restaurant: 8, Movies: 7,
+      Electricity: 6, Grocery: 4, Healthcare: 3, Education: 2
+    },
+    family: {
+      Education: 10, Healthcare: 9, Housing: 8, Grocery: 8,
+      Electricity: 6, Transport: 5, Restaurant: 3, Movies: 3
+    },
+    frugal: {
+      Housing: 10, Grocery: 8, Transport: 8, Electricity: 8,
+      Healthcare: 6, Education: 4, Restaurant: 2, Movies: 2
+    },
+    student: {
+      Housing: 10, Restaurant: 8, Movies: 7, Grocery: 6,
+      Transport: 6, Education: 5, Electricity: 4, Healthcare: 3
+    },
+    balanced: {
+      Housing: 5, Grocery: 5, Transport: 5, Healthcare: 5,
+      Education: 5, Electricity: 5, Restaurant: 5, Movies: 5
+    }
+  };
+
   // State
   let citiesData = [];
   let leafletMap = null;
   let mapMarkersLayer = null;
   let currentRankedCities = [];
 
-  // DOM Elements
+  // DOM Elements - Recommender
   const weightsForm = document.getElementById('weights-form');
   const btnCalculate = document.getElementById('btn-calculate');
   const btnResetWeights = document.getElementById('btn-reset-weights');
@@ -51,15 +76,84 @@
   const allCitiesTbody = document.getElementById('all-cities-tbody');
   const filterCityInput = document.getElementById('filter-city-input');
 
+  // DOM Elements - Salary Calculator
+  const salaryCurrCity = document.getElementById('salary-curr-city');
+  const salaryTargetCity = document.getElementById('salary-target-city');
+  const salaryAmount = document.getElementById('salary-amount');
+  const btnCalculateSalary = document.getElementById('btn-calculate-salary');
+  const salaryDisplayCurr = document.getElementById('salary-display-curr');
+  const salaryDisplayCurrCity = document.getElementById('salary-display-curr-city');
+  const salaryDisplayEquiv = document.getElementById('salary-display-equiv');
+  const salaryDisplayTargetCity = document.getElementById('salary-display-target-city');
+  const salaryDisplayMonthly = document.getElementById('salary-display-monthly');
+  const salaryDisplayDiffPct = document.getElementById('salary-display-diff-pct');
+  const salaryCategoryTbody = document.getElementById('salary-category-tbody');
+
+  // DOM Elements - City Comparator
+  const compareCityA = document.getElementById('compare-city-a');
+  const compareCityB = document.getElementById('compare-city-b');
+  const compareNameA = document.getElementById('compare-name-a');
+  const compareNameB = document.getElementById('compare-name-b');
+  const compareIndexA = document.getElementById('compare-index-a');
+  const compareIndexB = document.getElementById('compare-index-b');
+  const compareDiffVal = document.getElementById('compare-diff-val');
+  const compareDiffDesc = document.getElementById('compare-diff-desc');
+  const compareThA = document.getElementById('compare-th-a');
+  const compareThB = document.getElementById('compare-th-b');
+  const compareTbody = document.getElementById('compare-tbody');
+
   // Initialization
   async function init() {
+    setupTabNavigation();
     setupSliderListeners();
+    setupPresetListeners();
+    setupSalaryCalculatorListeners();
+    setupComparatorListeners();
     initLeafletMap();
     await loadCitiesData();
-    calculateAndRender();
+    populateCityDropdowns();
+    calculateAndRenderRecommender();
+    calculateAndRenderSalary();
+    calculateAndRenderComparator();
     if (window.lucide) {
       window.lucide.createIcons();
     }
+  }
+
+  // Tab Navigation
+  function setupTabNavigation() {
+    const navTabs = document.querySelectorAll('.nav-tab');
+    navTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTabId = tab.getAttribute('data-tab');
+        
+        // Update active tab button
+        navTabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+
+        // Update active tab panel
+        document.querySelectorAll('.tab-panel').forEach(panel => {
+          panel.classList.remove('active');
+        });
+        const targetPanel = document.getElementById(targetTabId);
+        if (targetPanel) {
+          targetPanel.classList.add('active');
+        }
+
+        // If switching to recommender, invalidate map size to render correctly
+        if (targetTabId === 'tab-recommender' && leafletMap) {
+          setTimeout(() => leafletMap.invalidateSize(), 100);
+        }
+
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+    });
   }
 
   // Load Cities Data
@@ -84,7 +178,29 @@
     }
   }
 
-  // Slider Listeners & Dynamic Badges
+  // Populate Dropdown Selectors
+  function populateCityDropdowns() {
+    if (!citiesData || citiesData.length === 0) return;
+
+    const sortedCities = [...citiesData].sort((a, b) => a.city.localeCompare(b.city));
+
+    const buildOptions = (selectedName) => {
+      return sortedCities.map(c => {
+        const isSel = c.city.toLowerCase() === selectedName.toLowerCase() ? 'selected' : '';
+        return `<option value="${c.city}" ${isSel}>${c.city}</option>`;
+      }).join('');
+    };
+
+    if (salaryCurrCity) salaryCurrCity.innerHTML = buildOptions('Mumbai');
+    if (salaryTargetCity) salaryTargetCity.innerHTML = buildOptions('Pune');
+    if (compareCityA) compareCityA.innerHTML = buildOptions('Mumbai');
+    if (compareCityB) compareCityB.innerHTML = buildOptions('Bengaluru');
+  }
+
+  // =========================================================================
+  // TAB 1: RECOMMENDER LOGIC
+  // =========================================================================
+
   function setupSliderListeners() {
     CATEGORIES.forEach(cat => {
       const slider = document.getElementById(`slider-${cat}`);
@@ -92,19 +208,20 @@
       if (slider && valBadge) {
         slider.addEventListener('input', (e) => {
           valBadge.textContent = e.target.value;
-          // Trigger instant calculation on change
-          calculateAndRender();
+          // Clear active state from presets when manually adjusted
+          document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+          calculateAndRenderRecommender();
         });
       }
     });
 
     if (selectTopN) {
-      selectTopN.addEventListener('change', () => calculateAndRender());
+      selectTopN.addEventListener('change', () => calculateAndRenderRecommender());
     }
 
     if (btnCalculate) {
       btnCalculate.addEventListener('click', () => {
-        calculateAndRender();
+        calculateAndRenderRecommender();
         const resultsSection = document.getElementById('results-section');
         if (resultsSection) {
           resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -114,15 +231,7 @@
 
     if (btnResetWeights) {
       btnResetWeights.addEventListener('click', () => {
-        CATEGORIES.forEach(cat => {
-          const slider = document.getElementById(`slider-${cat}`);
-          const valBadge = document.getElementById(`val-${cat}`);
-          if (slider && valBadge) {
-            slider.value = 5;
-            valBadge.textContent = '5';
-          }
-        });
-        calculateAndRender();
+        applyPreset('balanced');
       });
     }
 
@@ -133,19 +242,45 @@
     }
   }
 
-  // Leaflet Map Initialization
+  function setupPresetListeners() {
+    const chips = document.querySelectorAll('.preset-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const presetKey = chip.getAttribute('data-preset');
+        applyPreset(presetKey);
+      });
+    });
+  }
+
+  function applyPreset(presetKey) {
+    const preset = PRESETS[presetKey];
+    if (!preset) return;
+
+    CATEGORIES.forEach(cat => {
+      const slider = document.getElementById(`slider-${cat}`);
+      const valBadge = document.getElementById(`val-${cat}`);
+      if (slider && valBadge) {
+        const val = preset[cat] || 5;
+        slider.value = val;
+        valBadge.textContent = val;
+      }
+    });
+
+    calculateAndRenderRecommender();
+  }
+
   function initLeafletMap() {
     const mapContainer = document.getElementById('city-map');
     if (!mapContainer) return;
 
-    // Center on geographic center of India
     leafletMap = L.map('city-map', {
       center: [21.5, 78.9629],
       zoom: 5,
       scrollWheelZoom: false
     });
 
-    // High quality OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -154,7 +289,6 @@
     mapMarkersLayer = L.layerGroup().addTo(leafletMap);
   }
 
-  // Get current slider weights
   function getSliderWeights() {
     const sliders = {};
     CATEGORIES.forEach(cat => {
@@ -164,7 +298,6 @@
     return sliders;
   }
 
-  // Calculate Weights and City Rankings
   function calculateRankings(sliders) {
     const newWeights = {};
     const multipliers = {};
@@ -181,14 +314,12 @@
       newWeights[cat] = BASE_WEIGHTS[cat] * mult;
     });
 
-    // Normalize weights to 1.0
     const totalWeight = Object.values(newWeights).reduce((a, b) => a + b, 0);
     const normWeights = {};
     CATEGORIES.forEach(cat => {
       normWeights[cat] = newWeights[cat] / totalWeight;
     });
 
-    // Compute custom index for each city
     const calculatedCities = citiesData.map(city => {
       let customIndex = 0.0;
       const contributions = [];
@@ -206,7 +337,6 @@
         });
       });
 
-      // Sort by cost driver impact
       contributions.sort((a, b) => b.impact - a.impact);
 
       return {
@@ -217,10 +347,8 @@
       };
     });
 
-    // Sort ascending (most affordable first)
     calculatedCities.sort((a, b) => a.custom_index - b.custom_index);
 
-    // Assign ranks
     calculatedCities.forEach((city, index) => {
       city.rank = index + 1;
     });
@@ -232,8 +360,7 @@
     };
   }
 
-  // Main Render Routine
-  function calculateAndRender() {
+  function calculateAndRenderRecommender() {
     if (!citiesData || citiesData.length === 0) return;
 
     const sliders = getSliderWeights();
@@ -241,25 +368,16 @@
     const { rankedCities, normWeights, multipliers } = calculateRankings(sliders);
     currentRankedCities = rankedCities;
 
-    // 1. Render Weights Breakdown Table
     renderWeightsTable(normWeights, multipliers);
-
-    // 2. Render Top N City Cards
     renderCityCards(rankedCities.slice(0, topN));
-
-    // 3. Update Leaflet Map with Top N Cities
     updateMapMarkers(rankedCities.slice(0, Math.min(topN, 10)));
-
-    // 4. Render Complete 50 Cities Table
     renderAllCitiesTable(rankedCities);
 
-    // Refresh icons
     if (window.lucide) {
       window.lucide.createIcons();
     }
   }
 
-  // Render Weights Table
   function renderWeightsTable(normWeights, multipliers) {
     if (!weightsTableBody) return;
 
@@ -281,7 +399,6 @@
     weightsTableBody.innerHTML = rows;
   }
 
-  // Render Recommendation Cards
   function renderCityCards(topCities) {
     if (!cityCardsContainer) return;
 
@@ -356,7 +473,6 @@
     cityCardsContainer.innerHTML = cardsHtml;
   }
 
-  // Update Leaflet Map Markers
   function updateMapMarkers(topCities) {
     if (!leafletMap || !mapMarkersLayer) return;
 
@@ -373,14 +489,14 @@
       const customIcon = L.divIcon({
         className: 'custom-map-pin',
         html: `<div class="custom-rank-marker ${markerClass}">#${city.rank}</div>`,
-        iconSize: [32, 32],
-        iconAnchor: [16, 16]
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
       });
 
       const popupContent = `
         <div class="map-popup-card">
           <h4>#${city.rank} ${city.city}</h4>
-          <hr style="margin: 6px 0; border: none; border-top: 1px solid #E5DBCD;">
+          <hr style="margin: 5px 0; border: none; border-top: 1px solid #E5DBCD;">
           <p><strong>Custom Index:</strong> ${city.custom_index.toFixed(1)}</p>
           <p><strong>Baseline Index:</strong> ${city.cost_of_living_index.toFixed(1)}</p>
         </div>
@@ -395,11 +511,10 @@
 
     if (latLngs.length > 0) {
       const bounds = L.latLngBounds(latLngs);
-      leafletMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 7 });
+      leafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 7 });
     }
   }
 
-  // Render All 50 Cities Table
   function renderAllCitiesTable(rankedCities) {
     if (!allCitiesTbody) return;
 
@@ -420,7 +535,6 @@
     allCitiesTbody.innerHTML = rowsHtml;
   }
 
-  // Filter All Cities Table
   function filterAllCitiesTable(searchTerm) {
     if (!allCitiesTbody) return;
     const rows = allCitiesTbody.querySelectorAll('tr');
@@ -432,6 +546,177 @@
         row.style.display = 'none';
       }
     });
+  }
+
+  // =========================================================================
+  // TAB 2: SALARY PARITY LOGIC
+  // =========================================================================
+
+  function setupSalaryCalculatorListeners() {
+    if (btnCalculateSalary) {
+      btnCalculateSalary.addEventListener('click', calculateAndRenderSalary);
+    }
+    if (salaryCurrCity) salaryCurrCity.addEventListener('change', calculateAndRenderSalary);
+    if (salaryTargetCity) salaryTargetCity.addEventListener('change', calculateAndRenderSalary);
+    if (salaryAmount) salaryAmount.addEventListener('input', calculateAndRenderSalary);
+  }
+
+  function calculateAndRenderSalary() {
+    if (!citiesData || citiesData.length === 0) return;
+
+    const currName = salaryCurrCity ? salaryCurrCity.value : 'Mumbai';
+    const tgtName = salaryTargetCity ? salaryTargetCity.value : 'Pune';
+    const currentSalaryLpa = parseFloat(salaryAmount ? salaryAmount.value : '15') || 15.0;
+
+    const currCity = citiesData.find(c => c.city.toLowerCase() === currName.toLowerCase());
+    const tgtCity = citiesData.find(c => c.city.toLowerCase() === tgtName.toLowerCase());
+
+    if (!currCity || !tgtCity) return;
+
+    const curIndex = currCity.cost_of_living_index;
+    const tgtIndex = tgtCity.cost_of_living_index;
+
+    const ratio = tgtIndex / curIndex;
+    const equivSalaryLpa = (currentSalaryLpa * ratio);
+    const annualDiffLpa = (currentSalaryLpa - equivSalaryLpa);
+    const monthlySavingsRupees = Math.round((annualDiffLpa * 100000.0) / 12.0);
+    const pctChange = (((tgtIndex - curIndex) / curIndex) * 100.0);
+
+    if (salaryDisplayCurr) salaryDisplayCurr.textContent = `${currentSalaryLpa.toFixed(1)} LPA`;
+    if (salaryDisplayCurrCity) salaryDisplayCurrCity.textContent = `in ${currCity.city}`;
+    if (salaryDisplayEquiv) salaryDisplayEquiv.textContent = `${equivSalaryLpa.toFixed(1)} LPA`;
+    if (salaryDisplayTargetCity) salaryDisplayTargetCity.textContent = `in ${tgtCity.city} for identical standard of living`;
+
+    if (salaryDisplayMonthly) {
+      const sign = monthlySavingsRupees >= 0 ? '+' : '-';
+      const formattedRs = Math.abs(monthlySavingsRupees).toLocaleString('en-IN');
+      salaryDisplayMonthly.textContent = `${sign}Rs ${formattedRs} / mo`;
+    }
+
+    if (salaryDisplayDiffPct) {
+      const direction = pctChange < 0 ? 'lower' : 'higher';
+      salaryDisplayDiffPct.textContent = `${Math.abs(pctChange).toFixed(1)}% ${direction} overall living cost`;
+    }
+
+    // Category breakdown
+    if (salaryCategoryTbody) {
+      const rows = CATEGORIES.map(cat => {
+        const field = CATEGORY_TO_FIELD[cat];
+        const valA = currCity[field] || 100.0;
+        const valB = tgtCity[field] || 100.0;
+        const diff = (((valB - valA) / valA) * 100.0);
+
+        let badgeClass = 'variance-equal';
+        let badgeText = '0.0%';
+        if (diff < -1) {
+          badgeClass = 'variance-cheaper';
+          badgeText = `${diff.toFixed(1)}% cheaper`;
+        } else if (diff > 1) {
+          badgeClass = 'variance-more-expensive';
+          badgeText = `+${diff.toFixed(1)}% higher`;
+        } else {
+          badgeText = 'Parity';
+        }
+
+        return `
+          <tr>
+            <td><strong>${cat}</strong></td>
+            <td>${valA.toFixed(1)}</td>
+            <td>${valB.toFixed(1)}</td>
+            <td><span class="variance-tag ${badgeClass}">${badgeText}</span></td>
+          </tr>
+        `;
+      }).join('');
+
+      salaryCategoryTbody.innerHTML = rows;
+    }
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  }
+
+  // =========================================================================
+  // TAB 3: CITY HEAD-TO-HEAD COMPARATOR LOGIC
+  // =========================================================================
+
+  function setupComparatorListeners() {
+    if (compareCityA) compareCityA.addEventListener('change', calculateAndRenderComparator);
+    if (compareCityB) compareCityB.addEventListener('change', calculateAndRenderComparator);
+  }
+
+  function calculateAndRenderComparator() {
+    if (!citiesData || citiesData.length === 0) return;
+
+    const nameA = compareCityA ? compareCityA.value : 'Mumbai';
+    const nameB = compareCityB ? compareCityB.value : 'Bengaluru';
+
+    const cityA = citiesData.find(c => c.city.toLowerCase() === nameA.toLowerCase());
+    const cityB = citiesData.find(c => c.city.toLowerCase() === nameB.toLowerCase());
+
+    if (!cityA || !cityB) return;
+
+    const idxA = cityA.cost_of_living_index;
+    const idxB = cityB.cost_of_living_index;
+    const pctDiff = (((idxB - idxA) / idxA) * 100.0);
+
+    if (compareNameA) compareNameA.textContent = cityA.city;
+    if (compareNameB) compareNameB.textContent = cityB.city;
+    if (compareIndexA) compareIndexA.textContent = idxA.toFixed(1);
+    if (compareIndexB) compareIndexB.textContent = idxB.toFixed(1);
+
+    if (compareDiffVal) {
+      const sign = pctDiff > 0 ? '+' : '';
+      compareDiffVal.textContent = `${sign}${pctDiff.toFixed(1)}%`;
+      compareDiffVal.className = 'diff-percent ' + (pctDiff < 0 ? 'diff-negative' : (pctDiff > 0 ? 'diff-positive' : 'diff-neutral'));
+    }
+
+    if (compareDiffDesc) {
+      if (pctDiff < 0) {
+        compareDiffDesc.textContent = `${cityB.city} is ${Math.abs(pctDiff).toFixed(1)}% more affordable overall than ${cityA.city}.`;
+      } else if (pctDiff > 0) {
+        compareDiffDesc.textContent = `${cityB.city} is ${pctDiff.toFixed(1)}% more expensive overall than ${cityA.city}.`;
+      } else {
+        compareDiffDesc.textContent = `${cityA.city} and ${cityB.city} have identical cost of living indices.`;
+      }
+    }
+
+    if (compareThA) compareThA.textContent = `${cityA.city} Index`;
+    if (compareThB) compareThB.textContent = `${cityB.city} Index`;
+
+    if (compareTbody) {
+      const rows = CATEGORIES.map(cat => {
+        const field = CATEGORY_TO_FIELD[cat];
+        const valA = cityA[field] || 100.0;
+        const valB = cityB[field] || 100.0;
+        const catDiff = (((valB - valA) / valA) * 100.0);
+
+        let badgeClass = 'variance-equal';
+        let badgeText = 'Parity';
+        if (catDiff < -1) {
+          badgeClass = 'variance-cheaper';
+          badgeText = `${catDiff.toFixed(1)}% (${cityB.city} cheaper)`;
+        } else if (catDiff > 1) {
+          badgeClass = 'variance-more-expensive';
+          badgeText = `+${catDiff.toFixed(1)}% (${cityB.city} higher)`;
+        }
+
+        return `
+          <tr>
+            <td><strong>${cat}</strong></td>
+            <td>${valA.toFixed(1)}</td>
+            <td>${valB.toFixed(1)}</td>
+            <td><span class="variance-tag ${badgeClass}">${badgeText}</span></td>
+          </tr>
+        `;
+      }).join('');
+
+      compareTbody.innerHTML = rows;
+    }
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   }
 
   // Boot Application
