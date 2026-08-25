@@ -1,0 +1,20 @@
+{
+  "name": "india-cost-of-living-index",
+  "version": "2.0.0",
+  "description": "Smart City Cost Index & Recommender Platform for 50 Indian Cities",
+  "main": "public/index.html",
+  "scripts": {
+    "dev": "npx serve public -p 3000",
+    "start": "npx serve public -p 3000",
+    "build": "echo 'Static build ready'"
+  },
+  "keywords": [
+    "cost-of-living",
+    "india-cities",
+    "recommender",
+    "smart-city",
+    "analytics"
+  ],
+  "author": "Mudit",
+  "license": "MIT"
+}

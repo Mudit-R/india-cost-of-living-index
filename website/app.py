@@ -26,277 +26,336 @@ st.set_page_config(
 # Professional CSS styling
 st.markdown("""
 <style>
-    /* Import Next Chapter fonts */
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Helvetica+Neue:wght@400;500;700&display=swap');
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Helvetica+Neue:wght@400;500;700&display=swap');
     
-    /* Global styles */
-    * {
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* Global CSS variables to override Streamlit internal themes */
+    :root {
+        --text-color: #1E1B18 !important;
+        --background-color: #F9F3EA !important;
+        --secondary-background-color: #F4EBE0 !important;
+        --primary-color: #21201D !important;
     }
     
-    /* Hide Streamlit branding */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    /* Universal typography and color overrides */
+    html, body, [class*="css"], .stApp, .main, p, span, label, li, h1, h2, h3, h4, h5, h6 {
+        font-family: 'Plus Jakarta Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+        color: #1E1B18 !important;
+        -webkit-font-smoothing: antialiased;
+    }
     
-    /* Streamlit app background overrides */
+    /* Hide Streamlit default header, deploy button & footer */
+    #MainMenu, footer, header, [data-testid="stHeader"], [data-testid="stToolbar"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* App background */
     .stApp {
-        background-color: #F9F3EA;
+        background-color: #F9F3EA !important;
     }
     
-    /* Main container */
     .main {
-        background: transparent;
-        padding: 2rem 1rem;
+        background: transparent !important;
+        padding: 2rem 1rem !important;
     }
     
     /* Header section */
     .header-container {
         background: transparent;
-        padding: 2rem 0;
-        border-radius: 0;
-        margin-bottom: 2rem;
-        border: none;
+        padding: 2rem 0 1.5rem 0;
+        margin-bottom: 1.5rem;
     }
     
     .main-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 5rem;
-        font-weight: 500;
-        color: #1E1B18;
-        margin: 0;
-        letter-spacing: -1.5px;
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 4.2rem !important;
+        font-weight: 600 !important;
+        color: #1E1B18 !important;
+        margin: 0 !important;
+        line-height: 1.1 !important;
+        letter-spacing: -1.5px !important;
     }
     
     .subtitle {
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 0.9rem;
-        color: #726E68;
-        margin-top: 1rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-    }
-    
-    /* Info box */
-    .info-box {
-        background: #F4EBE0;
-        border: 1px solid #E5DBCD;
-        border-radius: 8px;
-        padding: 2rem;
-        margin: 1.5rem 0;
-    }
-    
-    .info-title {
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: #726E68;
-        margin-bottom: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-    }
-    
-    .info-text {
-        font-size: 1.05rem;
-        color: #4A4845;
-        line-height: 1.6;
+        font-size: 0.95rem !important;
+        color: #726E68 !important;
+        margin-top: 0.8rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1.5px !important;
     }
     
     /* Section headers */
     .section-header {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.5rem;
-        font-weight: 500;
-        color: #1E1B18;
-        margin: 3rem 0 1.5rem 0;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #1E1B18;
-        letter-spacing: -1px;
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 2.2rem !important;
+        font-weight: 600 !important;
+        color: #1E1B18 !important;
+        margin: 2.5rem 0 1.5rem 0 !important;
+        padding-bottom: 0.8rem !important;
+        border-bottom: 2px solid #1E1B18 !important;
+        letter-spacing: -0.5px !important;
     }
     
-    /* Priority cards */
-    .priority-card {
-        background: transparent;
-        padding: 1.5rem 0;
-        border-radius: 0;
-        border: none;
-        border-top: 1px solid #E5DBCD;
-        margin-bottom: 1rem;
+    /* Info box */
+    .info-box {
+        background: #F4EBE0 !important;
+        border: 1px solid #E5DBCD !important;
+        border-radius: 8px !important;
+        padding: 1.8rem !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    .info-title {
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        color: #726E68 !important;
+        margin-bottom: 0.8rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1.5px !important;
+    }
+    
+    .info-text {
+        font-size: 1rem !important;
+        color: #2C2926 !important;
+        line-height: 1.6 !important;
+    }
+    
+    /* Streamlit Expander styling */
+    [data-testid="stExpander"] {
+        background-color: #F4EBE0 !important;
+        border: 1px solid #E5DBCD !important;
+        border-radius: 8px !important;
+        margin: 1rem 0 !important;
+        box-shadow: none !important;
+    }
+    
+    [data-testid="stExpander"] details {
+        background-color: #F4EBE0 !important;
+        border-radius: 8px !important;
+    }
+    
+    [data-testid="stExpander"] summary {
+        background-color: #F4EBE0 !important;
+        border-radius: 8px !important;
+        color: #1E1B18 !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        padding: 0.8rem 1.2rem !important;
+    }
+    
+    [data-testid="stExpander"] summary:hover {
+        background-color: #EFE4D6 !important;
+        color: #1E1B18 !important;
+    }
+    
+    [data-testid="stExpander"] summary svg, [data-testid="stExpanderToggleIcon"] {
+        color: #1E1B18 !important;
+        fill: #1E1B18 !important;
+    }
+    
+    [data-testid="stExpanderDetails"] {
+        background-color: #F4EBE0 !important;
+        border-top: 1px solid #E5DBCD !important;
+        padding: 1.2rem !important;
+    }
+    
+    /* Streamlit Sliders */
+    [data-testid="stSlider"] {
+        padding: 0.5rem 0 !important;
+    }
+    
+    [data-testid="stSlider"] label, [data-testid="stWidgetLabel"] p {
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        color: #1E1B18 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+    }
+    
+    /* Slider Track & Thumb */
+    [data-testid="stSlider"] [data-baseweb="slider"] {
+        background: transparent !important;
+    }
+    
+    /* Track highlight */
+    div[data-testid="stSlider"] div[data-testid="stSliderTickBar"] {
+        background: #E5DBCD !important;
+    }
+    
+    /* Slider value label */
+    [data-testid="stSlider"] [data-testid="stThumbValue"] {
+        color: #1E1B18 !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Button styling */
+    .stButton > button {
+        background-color: #1E1B18 !important;
+        color: #FAF4EB !important;
+        font-weight: 600 !important;
+        border: none !important;
+        padding: 0.9rem 2.2rem !important;
+        border-radius: 4px !important;
+        font-size: 0.95rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1.2px !important;
+        box-shadow: 0 4px 12px rgba(30, 27, 24, 0.15) !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .stButton > button:hover {
+        background-color: #3A3835 !important;
+        color: #FFFFFF !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(30, 27, 24, 0.25) !important;
     }
     
     /* City result cards */
     .city-card {
-        background: transparent;
-        padding: 3rem 0;
-        border-radius: 0;
-        border: none;
-        border-top: 1px solid #1E1B18;
-        margin-bottom: 1rem;
-        transition: none;
-    }
-    
-    .city-card:hover {
-        /* No hover transform */
+        background: #FFFFFF !important;
+        border: 1px solid #E5DBCD !important;
+        border-radius: 12px !important;
+        padding: 2.2rem 2.5rem !important;
+        margin-bottom: 2rem !important;
+        box-shadow: 0 4px 16px rgba(30, 27, 24, 0.04) !important;
     }
     
     .rank-badge {
         display: inline-block;
-        background: transparent;
-        color: #726E68;
-        padding: 0;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-weight: 600;
-        font-size: 0.85rem;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
+        background: #F4EBE0 !important;
+        color: #726E68 !important;
+        padding: 0.3rem 0.8rem !important;
+        border-radius: 4px !important;
+        font-weight: 700 !important;
+        font-size: 0.8rem !important;
+        margin-bottom: 0.8rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1.5px !important;
+        border: 1px solid #E5DBCD !important;
     }
     
     .city-name {
-        font-family: 'Playfair Display', serif;
-        font-size: 3.5rem;
-        font-weight: 500;
-        color: #1E1B18;
-        margin: 0.5rem 0;
-        letter-spacing: -1px;
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 3.2rem !important;
+        font-weight: 600 !important;
+        color: #1E1B18 !important;
+        margin: 0.2rem 0 1rem 0 !important;
+        letter-spacing: -1px !important;
     }
     
     .city-explanation {
-        font-size: 1.05rem;
-        color: #4A4845;
-        line-height: 1.6;
-        margin: 1rem 0;
+        font-size: 1.05rem !important;
+        color: #383431 !important;
+        line-height: 1.65 !important;
+        margin: 0.5rem 0 !important;
     }
     
-    /* Metric boxes */
+    /* Metric boxes inside cards */
     .metric-container {
-        background: transparent;
-        padding: 1rem 1.5rem;
-        border-radius: 0;
-        text-align: left;
-        border: none;
-        height: 100%;
-        border-left: 1px solid #1E1B18;
+        background: #F9F3EA !important;
+        padding: 1.4rem 1.8rem !important;
+        border-radius: 8px !important;
+        text-align: left !important;
+        border: 1px solid #E5DBCD !important;
+        height: 100% !important;
     }
     
     .metric-label {
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 0.85rem;
-        color: #726E68;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        margin-bottom: 1rem;
+        font-size: 0.8rem !important;
+        color: #726E68 !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1.5px !important;
+        margin-bottom: 0.5rem !important;
     }
     
     .metric-value {
-        font-family: 'Playfair Display', serif;
-        font-size: 3.5rem;
-        font-weight: 500;
-        color: #1E1B18;
-        letter-spacing: -1.5px;
-        line-height: 1;
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 3.2rem !important;
+        font-weight: 600 !important;
+        color: #1E1B18 !important;
+        letter-spacing: -1.5px !important;
+        line-height: 1 !important;
     }
     
     .metric-delta {
-        font-size: 0.9rem;
-        color: #726E68;
-        margin-top: 1rem;
-        font-weight: 400;
+        font-size: 0.85rem !important;
+        color: #726E68 !important;
+        margin-top: 0.6rem !important;
+        font-weight: 500 !important;
     }
     
-    /* Button styling */
-    .stButton>button {
-        background: #21201D !important;
-        color: #FAF4EB !important;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    /* Streamlit DataFrame & Table styling overrides */
+    [data-testid="stDataFrame"], [data-testid="stTable"], .dataframe {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E5DBCD !important;
+        border-radius: 8px !important;
+        padding: 0.5rem !important;
+        color: #1E1B18 !important;
+    }
+    
+    /* Table headers and cells */
+    table, th, td {
+        color: #1E1B18 !important;
+        border-color: #E5DBCD !important;
+    }
+    
+    th {
+        background-color: #F4EBE0 !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Slider numbers and tick labels */
+    div[data-testid="stSlider"] span {
+        color: #1E1B18 !important;
         font-weight: 600 !important;
-        border: none !important;
-        padding: 0.8rem 2rem !important;
-        border-radius: 2px !important;
-        font-size: 0.9rem !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-        transition: background-color 0.2s !important;
     }
     
-    .stButton>button:hover {
-        background: #3A3835 !important;
-        color: #FAF4EB !important;
+    div[data-testid="stSlider"] p {
+        color: #1E1B18 !important;
     }
     
-    /* Slider styling */
-    .stSlider label {
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-weight: 600;
-        color: #1E1B18;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+    /* Tooltip icons */
+    [data-testid="stTooltipIcon"] svg {
+        fill: #726E68 !important;
+        color: #726E68 !important;
     }
     
-    /* Expander styling */
-    .streamlit-expanderHeader {
-        background: #F4EBE0;
-        border-radius: 8px;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-weight: 600;
-        color: #1E1B18;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        font-size: 0.9rem;
-        border: 1px solid #E5DBCD;
+    /* Help tooltips */
+    div[data-baseweb="tooltip"] {
+        background-color: #1E1B18 !important;
+        color: #FFFFFF !important;
+        border-radius: 6px !important;
     }
     
-    /* Table styling */
-    .dataframe {
-        font-size: 1rem;
-        border-collapse: collapse;
-    }
-    
-    /* Priority summary boxes */
-    .priority-summary {
-        background: #F4EBE0;
-        padding: 1.5rem;
-        border-radius: 8px;
-        border: 1px solid #E5DBCD;
-    }
-    
-    .priority-summary h4 {
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #726E68;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #E5DBCD;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-    }
-    
-    .priority-item {
-        color: #1E1B18;
-        font-size: 1rem;
-        margin: 0.5rem 0;
+    /* Map Container */
+    .element-container:has(iframe) {
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        border: 1px solid #E5DBCD !important;
+        box-shadow: 0 4px 16px rgba(30, 27, 24, 0.04) !important;
     }
     
     /* Footer */
     .footer {
         text-align: left;
-        color: #1E1B18;
-        padding: 3rem 0;
-        margin-top: 5rem;
-        font-size: 1rem;
+        color: #1E1B18 !important;
+        padding: 3rem 0 2rem 0;
+        margin-top: 4rem;
+        font-size: 0.95rem;
         background: transparent;
-        border-top: 1px solid #1E1B18;
+        border-top: 2px solid #1E1B18;
     }
     
     .footer-title {
-        font-family: 'Playfair Display', serif;
-        font-weight: 500;
-        color: #1E1B18;
-        margin-bottom: 1rem;
-        font-size: 1.8rem;
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-weight: 600 !important;
+        color: #1E1B18 !important;
+        margin-bottom: 0.8rem;
+        font-size: 1.6rem;
     }
 </style>
 """, unsafe_allow_html=True)

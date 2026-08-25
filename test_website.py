@@ -20,69 +20,38 @@ def test_recommender():
     print(f"   ✓ Loaded {len(recommender.df)} cities")
     
     # Test Scenario 1: Cheap housing and grocery
-    print("\n2. Test Scenario: Cheap housing and grocery")
+    print("\n2. Test Scenario: High Housing and Grocery priority")
     priorities = {
-        'Housing': 'cheap',
-        'Grocery': 'cheap',
-        'Transport': 'neutral',
-        'Healthcare': 'neutral',
-        'Education': 'neutral',
-        'Electricity': 'neutral',
-        'Restaurant': 'neutral',
-        'Movies': 'neutral'
+        'Housing': 10,
+        'Grocery': 8,
+        'Transport': 5,
+        'Healthcare': 5,
+        'Education': 5,
+        'Electricity': 3,
+        'Restaurant': 2,
+        'Movies': 1
     }
     
-    recs = recommender.get_recommendations(priorities, top_n=5)
+    recs, norm_w = recommender.get_recommendations(priorities, top_n=5)
     print(f"   ✓ Generated {len(recs)} recommendations")
     print("\n   Top 5 Cities:")
     for rec in recs:
         print(f"   {rec['rank']}. {rec['city']}")
-        print(f"      Match Score: {rec['match_score']:.2f}")
+        print(f"      Custom Index: {rec['custom_index']:.1f}")
         print(f"      Overall Index: {rec['overall_index']:.1f}")
         print(f"      {rec['explanation'][:100]}...")
         print()
     
-    # Test Scenario 2: Everything cheap
-    print("\n3. Test Scenario: Everything must be cheap")
-    priorities_all_cheap = {cat: 'cheap' for cat in CATEGORIES}
+    # Test Scenario 2: High Education Priority
+    print("\n3. Test Scenario: High Education Priority")
+    priorities_edu = {cat: 5 for cat in CATEGORIES}
+    priorities_edu['Education'] = 10
     
-    recs = recommender.get_recommendations(priorities_all_cheap, top_n=5)
+    recs, norm_w = recommender.get_recommendations(priorities_edu, top_n=5)
     print(f"   ✓ Generated {len(recs)} recommendations")
-    print("\n   Top 5 Most Affordable Cities:")
+    print("\n   Top 5 Recommended Cities:")
     for rec in recs:
-        print(f"   {rec['rank']}. {rec['city']} - Overall Index: {rec['overall_index']:.1f}")
-    
-    # Test Scenario 3: Cheap housing, expensive education OK
-    print("\n4. Test Scenario: Cheap housing, expensive education OK")
-    priorities = {
-        'Housing': 'cheap',
-        'Grocery': 'neutral',
-        'Transport': 'neutral',
-        'Healthcare': 'neutral',
-        'Education': 'expensive_ok',
-        'Electricity': 'neutral',
-        'Restaurant': 'neutral',
-        'Movies': 'neutral'
-    }
-    
-    recs = recommender.get_recommendations(priorities, top_n=5)
-    print(f"   ✓ Generated {len(recs)} recommendations")
-    print("\n   Top 5 Cities:")
-    for rec in recs:
-        print(f"   {rec['rank']}. {rec['city']}")
-        print(f"      Housing Index: {rec['all_indices']['Housing']:.1f}")
-        print(f"      Education Index: {rec['all_indices']['Education']:.1f}")
-        print()
-    
-    # Test Scenario 4: Everything expensive
-    print("\n5. Test Scenario: Everything can be expensive (want premium cities)")
-    priorities_all_expensive = {cat: 'expensive_ok' for cat in CATEGORIES}
-    
-    recs = recommender.get_recommendations(priorities_all_expensive, top_n=5)
-    print(f"   ✓ Generated {len(recs)} recommendations")
-    print("\n   Top 5 Most Expensive Cities:")
-    for rec in recs:
-        print(f"   {rec['rank']}. {rec['city']} - Overall Index: {rec['overall_index']:.1f}")
+        print(f"   {rec['rank']}. {rec['city']} - Custom Index: {rec['custom_index']:.1f}")
     
     # Test city stats
     print("\n6. Test City Stats: Mumbai")
