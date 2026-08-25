@@ -1,138 +1,148 @@
-# Smart City Cost Index & Recommender Platform
+# India Cost of Living & City Intelligence Platform
 
-A full-stack analytics platform and high-performance microservice engine analyzing cost of living metrics across 50 Indian cities using multi-source scraped data (50K+ listings), automated ETL pipelines, PCA dimensionality reduction, and custom priority-matching algorithms.
+**Live Deployment:** [https://india-cost-of-living-index.vercel.app](https://india-cost-of-living-index.vercel.app)  
+**GitHub Repository:** [https://github.com/Mudit-R/india-cost-of-living-index](https://github.com/Mudit-R/india-cost-of-living-index)
+
+An analytical platform and economic intelligence system evaluating cost of living metrics across 50 Indian cities using multi-source data (50,000+ data points), custom multi-attribute preference matching, purchasing power parity (PPP) salary calculators, and interactive geospatial mapping.
+
+---
+
+## Visual Overview
+
+### 1. City Cost Recommender & Lifestyle Presets
+Custom multi-criteria weighting engine with one-click lifestyle presets and interactive geographic mapping.
+
+![City Cost Recommender](docs/images/city_recommender.png)
+
+---
+
+### 2. Interactive Geospatial Mapping
+Leaflet.js mapping with OpenStreetMap tiles, custom rank pins, and responsive city detail overlays.
+
+![Interactive Geospatial Map](docs/images/interactive_map.png)
+
+---
+
+### 3. Salary & Relocation Parity Calculator
+Calculates equivalent purchasing power and net monthly savings when relocating between any two Indian cities.
+
+![Salary & Relocation Parity](docs/images/salary_calculator.png)
+
+---
+
+### 4. City Head-to-Head Comparator
+Side-by-side comparative analysis with 8-dimension cost variance analytics.
+
+![City Head-to-Head Comparator](docs/images/city_comparator.png)
+
+---
+
+## Core Capabilities
+
+### 1. Personalized City Recommender
+* **8 Expense Categories**: Housing, Grocery, Transport, Healthcare, Education, Electricity, Restaurant, and Movies.
+* **1 to 10 Weight Multipliers**: Adjust priority scaling from 0.1x (unimportant) to 2.0x (critical priority).
+* **Lifestyle Presets**: Instantly apply optimized weight profiles for Tech & Remote Workers, Growing Families, Frugal Savers (FIRE), and Students / Early Career professionals.
+* **Instant Calculation**: Sub-5ms client-side index re-scoring across all 50 cities.
+
+### 2. Purchasing Power Parity (PPP) Salary Calculator
+* **Relocation Equivalence**: Computes the exact gross CTC required in a target city to maintain an identical standard of living.
+* **Net Monthly Savings**: Displays estimated monthly budget differential (`+/- Rs / mo`).
+* **Category Breakdown**: Granular variance percentages for each expense dimension between source and target cities.
+
+### 3. Head-to-Head City Comparator
+* **Comparative Cost Delta**: Displays percentage difference in overall living expenses between any two Indian cities.
+* **Side-by-Side Breakdown**: Category-by-category index values with color-coded variance tags.
+
+### 4. 50-City Database Explorer
+* Searchable and sortable data table indexing all 50 cities benchmarked against Delhi (Delhi = 100).
+
+---
+
+## Mathematical Formulation
+
+### 1. Component Weight Redistribution
+Given baseline weights $w_i^{\text{base}}$ where $\sum w_i^{\text{base}} = 1.0$:
+
+$$\text{multiplier}_i = \begin{cases} 0.1 + (s_i - 1) \times \frac{0.9}{4.0} & \text{if } s_i \le 5 \\ 1.0 + (s_i - 5) \times \frac{1.0}{5.0} & \text{if } s_i > 5 \end{cases}$$
+
+$$\hat{w}_i = \frac{w_i^{\text{base}} \times \text{multiplier}_i}{\sum_{j} (w_j^{\text{base}} \times \text{multiplier}_j)}$$
+
+### 2. Custom Cost Index
+$$\text{Custom Index}_c = \sum_{i=1}^{8} I_{c, i} \times \hat{w}_i$$
+
+*Where $I_{c, i}$ is the index of category $i$ in city $c$ relative to Delhi ($I_{\text{Delhi}, i} = 100$).*
+
+### 3. Salary Equivalence (PPP)
+$$\text{Salary}_{\text{target}} = \text{Salary}_{\text{current}} \times \left( \frac{\text{Index}_{\text{target}}}{\text{Index}_{\text{current}}} \right)$$
+
+$$\text{Monthly Savings} = \frac{(\text{Salary}_{\text{current}} - \text{Salary}_{\text{target}}) \times 100,000}{12}$$
+
+---
+
+## Technology Stack
+
+* **Frontend**: Vanilla HTML5, CSS3, Vanilla JavaScript (Zero framework overhead, 60fps responsiveness)
+* **Geospatial Visualization**: Leaflet.js, OpenStreetMap
+* **Typography**: Playfair Display, Plus Jakarta Sans
+* **Icons**: Lucide SVG Icons
+* **Data Layer**: Pre-compiled JSON Dataset (50 Cities, 8 Categories, Geographic Coordinates)
+* **Deployment**: Vercel (Edge CDN, Zero Cold Starts)
+* **Backend Analytics (Optional Service)**: Python 3.10+, FastAPI, Pandas, Scikit-Learn
+
+---
+
+## Project Structure
 
 ```
-                         ┌─────────────────────────┐
-                         │   Streamlit Web Client  │
-                         │    (Interactive UI)     │
-                         └────────────┬────────────┘
-                                      │ HTTP REST / JSON
-                                      ▼
-                         ┌─────────────────────────┐
-                         │   FastAPI REST Engine   │
-                         │   (Uvicorn / Async)     │
-                         └─────┬─────────────┬─────┘
-                               │             │
-                      Cache Hit│             │ DB / Index Scan
-                               ▼             ▼
-                        ┌───────────┐   ┌───────────┐
-                        │  LRU Key  │   │ Analytics │
-                        │   Cache   │   │  Engine   │
-                        └───────────┘   └───────────┘
+.
+├── public/                     # Static web application (deployed to Vercel)
+│   ├── css/
+│   │   └── style.css           # Editorial typography & responsive styles
+│   ├── data/
+│   │   └── cities.json         # 50 Indian cities cost index dataset
+│   ├── js/
+│   │   ├── app.js              # Calculation engine, tabs, & Leaflet mapping
+│   │   └── cities-data.js      # Synchronous dataset provider
+│   └── index.html              # Main application entrypoint
+├── docs/
+│   └── images/                 # Platform screenshots
+├── src/                        # Python analytics engine & ML models
+│   ├── salary_calculator.py    # PPP salary conversion engine
+│   ├── ml_personas.py          # K-Means archetype clustering
+│   └── cache_engine.py         # Query cache layer
+├── api/                        # FastAPI microservice
+│   └── main.py                 # REST endpoints
+├── vercel.json                 # Vercel deployment configuration
+├── .vercelignore               # Vercel build exclusions
+└── package.json                # Project metadata
 ```
 
 ---
 
-## 🚀 Key Features
+## Local Development
 
-* **Full-Stack Architecture**: Decoupled FastAPI REST service with an interactive Streamlit UI frontend.
-* **Sub-50ms Recommendation Engine**: Custom multi-attribute scoring algorithm with LRU query caching for low latency.
-* **RESTful API Services**: Comprehensive OpenAPI endpoints (`/docs`) for city data, multi-criteria recommendation queries, and PCA variance metrics.
-* **Docker Containerization**: Production multi-container orchestration via `docker-compose.yml`.
-* **Automated Data Engineering**: Asynchronous Web Scraping (BeautifulSoup/Selenium) and NLP normalization across 50K+ real-estate, grocery, healthcare, and education listings.
-* **PCA Dimensionality Reduction**: Identified Housing and Grocery as key variance drivers ($65\%$ explained variance) with a $0.93$ correlation to economic benchmarks.
-* **CI/CD Integration**: Automated GitHub Actions workflow for linting and Pytest API verification.
-
----
-
-## 🛠 Tech Stack
-
-* **Backend & API**: Python 3.10+, FastAPI, Uvicorn, Pydantic v2
-* **Frontend**: Streamlit, Folium (Leaflet Interactive Maps), Custom CSS
-* **Data Science & ML**: Pandas, NumPy, Scikit-Learn (PCA & Clustering)
-* **Storage & Caching**: CSV/Relational Storage, In-Memory LRU Cache
-* **DevOps & Testing**: Docker, Docker Compose, Pytest, GitHub Actions CI/CD
-
----
-
-## ⚡ Quick Start
-
-### 1. Launch with Docker Compose (Recommended)
+### Option 1: Static Preview (Recommended)
 ```bash
-docker-compose up --build
+# Using Python built-in server
+python -m http.server 8085 --directory public
+
+# Or using Node.js
+npx serve public -p 8085
 ```
-* **FastAPI Swagger Docs**: `http://localhost:8000/docs`
-* **Streamlit Web UI**: `http://localhost:8501`
+Open [http://localhost:8085](http://localhost:8085) in your browser.
 
-### 2. Manual Installation
+### Option 2: Deploy to Vercel
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# Install Vercel CLI
+npm install -g vercel
 
-# Start FastAPI Backend Server
-uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
-
-# Start Streamlit Frontend Client (in a separate terminal)
-streamlit run website/app.py
+# Deploy to production
+vercel --prod
 ```
 
 ---
 
-## 📡 REST API Documentation
+## License
 
-| Endpoint | Method | Description |
-| :--- | :--- | :--- |
-| `/api/v1/health` | `GET` | Service status & city dataset metadata |
-| `/api/v1/cities` | `GET` | List all 50 cities with cost of living indices |
-| `/api/v1/cities/{city_name}` | `GET` | Detailed category breakdown for a specific city |
-| `/api/v1/recommend` | `POST` | Execute priority-weighted recommendation search |
-| `/api/v1/analytics/pca` | `GET` | PCA component variance breakdown & factor loadings |
-
-### Example Recommendation Request:
-```bash
-curl -X 'POST' \
-  'http://localhost:8000/api/v1/recommend' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "weights": {
-    "Housing": 10,
-    "Grocery": 8,
-    "Transport": 5,
-    "Healthcare": 5,
-    "Education": 5,
-    "Electricity": 3,
-    "Restaurant": 2,
-    "Movies": 1
-  },
-  "top_k": 5
-}'
-```
-
----
-
-## 🧪 Running Tests
-
-Execute the automated Pytest suite:
-```bash
-pytest tests/ -v
-```
-
----
-
-## 📁 Repository Structure
-
-```
-├── api/                    # FastAPI REST Application Layer
-│   ├── main.py             # API routes & middleware
-│   ├── schemas.py          # Pydantic request & response models
-│   └── services.py         # Recommender engine & caching layer
-│
-├── website/                # Streamlit Frontend Client
-│   ├── app.py              # Interactive UI & Folium map integration
-│   └── recommender.py      # Core ranking algorithms
-│
-├── src/                    # Data Processing & ML Scripts
-│   ├── data_loader.py      # Multi-source web scraper ETL
-│   ├── pca_analysis.py     # PCA statistical modeling
-│   └── cost_calculator.py  # Composite index calculator
-│
-├── tests/                  # Automated Test Suite
-│   └── test_api.py         # Pytest API integration tests
-│
-├── outputs/                # Calculated Reports & Visualizations
-├── Dockerfile.api          # Backend Docker container configuration
-├── Dockerfile.web          # Frontend Docker container configuration
-├── docker-compose.yml      # Multi-container orchestration setup
-└── .github/workflows/ci.yml # GitHub Actions CI/CD Pipeline
-```
+MIT License. Developed for research and city affordability benchmarking in India.
