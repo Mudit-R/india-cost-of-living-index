@@ -1,7 +1,6 @@
 # India Cost of Living & City Intelligence Platform
 
 **Live Deployment:** [https://india-cost-of-living-index.vercel.app](https://india-cost-of-living-index.vercel.app)  
-**GitHub Repository:** [https://github.com/Mudit-R/india-cost-of-living-index](https://github.com/Mudit-R/india-cost-of-living-index)
 
 An analytical platform and economic intelligence system evaluating cost of living metrics across 50 Indian cities using multi-source data (50,000+ data points), custom multi-attribute preference matching, purchasing power parity (PPP) salary calculators, and interactive geospatial mapping.
 
