@@ -119,29 +119,6 @@ $$\text{Monthly Savings} = \frac{(\text{Salary}_{\text{current}} - \text{Salary}
 
 ---
 
-## Local Development
-
-### Option 1: Static Preview (Recommended)
-```bash
-# Using Python built-in server
-python -m http.server 8085 --directory public
-
-# Or using Node.js
-npx serve public -p 8085
-```
-Open [http://localhost:8085](http://localhost:8085) in your browser.
-
-### Option 2: Deploy to Vercel
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Deploy to production
-vercel --prod
-```
-
----
-
 ## License
 
 MIT License. Developed for research and city affordability benchmarking in India.
