@@ -1,15 +1,5 @@
 {
-  "cleanUrls": true,
+  "buildCommand": null,
   "outputDirectory": "public",
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600, s-maxage=86400"
-        }
-      ]
-    }
-  ]
+  "cleanUrls": true
 }

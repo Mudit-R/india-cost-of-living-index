@@ -1,0 +1,10 @@
+requirements.txt
+api/
+src/
+tests/
+Dockerfile*
+docker-compose.yml
+.streamlit/
+website/
+outputs/
+*.py
